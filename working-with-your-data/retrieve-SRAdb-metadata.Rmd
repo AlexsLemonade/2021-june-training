@@ -1,0 +1,307 @@
+---
+title: "Example of How to Retrieve Metadata from SRAdb "
+author: "Candace Savonen"
+date: "2020"
+output:
+  html_notebook:
+    toc: true
+    toc_float: true
+---
+
+## Summary:
+
+Sequence Read Archive (SRA) is a public repository of sequencing data, including many RNA-seq datasets.  
+[SRAdb](https://rdrr.io/bioc/SRAdb/) is an R package on Bioconductor that can help you retrieve metadata associated with samples on SRA, which is what we'll use it for here.
+It also can help you look up URLs for files you might want to retrieve.
+
+In this example, we will show you how to retrieve metadata from SRAdb for a project or study id (eg. **SRP**123456).
+The authors of SRAdb provide an [sqlite file](https://www.sqlite.org/aff_short.html),
+ `SRAmetadb.sqlite`, that contains the database that we will query to get the metadata we need.
+
+The Tidyverse includes the [`dbplyr` package](https://dbplyr.tidyverse.org/) made for working with _database_ files like `sqlite` using much of the same `dplyr` syntax that we have already been using.
+We will use `*db*plyr` (an extension of `*d*plyr` functions) to extract sample information related to our SRA project ID (`SRP`) id of interest. 
+You will recognize a lot of the functions from our [Intro to the Tidyverse notebook](https://github.com/AlexsLemonade/training-modules/blob/master/intro-to-R-tidyverse/03-intro_to_tidyverse.Rmd). 
+
+### Obtaining the SRAdb sqlite file
+
+`SRAmetadb.sqlite` is already downloaded for you in `~/shared-data/SRAdb`.
+We are including this code for your reference so you know how to obtain this file outside of our RStudio Server. 
+
+Note that this file is very large (24 GB!), so please be sure to avoid downloading another copy to our RStudio Server.
+
+```r
+# Install the SRAdb package if it is not installed.
+# if (!("SRAdb" %in% installed.packages())) {
+#   BiocManager::install("SRAdb")
+# }
+
+# Declare directory to hold SRAdb file
+# sra_db_dr <- <DIRECTORY NAME HERE>
+
+# Create the directory where the SRAdb file will be downloaded to
+# if (!dir.exists(sra_db_dir)) {
+#   dir.create(sra_db_dir, recursive = TRUE)
+# }
+
+# Downloading this file will take some time, so we will only download it if 
+# it doesn't exist.
+# if (!file.exists(sqlite_file)) {
+#   # Use SRAdb's function to download the file
+#   SRAdb::getSRAdbFile(destdir = sra_db_dir)
+# }
+```
+
+### Set Up
+
+For this example, we will use  [SRP045496](https://www.refine.bio/experiments/SRP045496/the-g-protein-alpha-subunit-gsa-is-a-tumor-suppressor-in-sonic-hedgehog-driven-medulloblastoma-rna-seq), an RNA-seq medulloblastoma mouse model experiment.
+
+For more on SRA ids and more than you'll need to know about the SRA database, see this [knowledge base](https://www.ncbi.nlm.nih.gov/books/NBK56913/).
+
+```{r}
+# Declare the project id you are interested in.
+study_id <- "SRP045496"
+```
+
+```{r}
+# magrittr pipe
+`%>%` <- dplyr::`%>%`
+```
+
+Set up SRA input directory and file path. 
+
+We have already downloaded this SRAdb file to the `shared-data` folder for you.
+
+```{r}
+# Declare SRA directory 
+# Here ~ refers to your home directory
+sra_db_dir <- file.path("~", "shared-data", "SRAdb")
+
+# Declare database file path
+sqlite_file <- file.path(sra_db_dir, "SRAmetadb.sqlite")
+```
+
+Set up output directory and file path. 
+
+```{r}
+# Declare output directory 
+output_dir <- file.path("SRA_metadata")
+
+# Declare output file path using the project ID
+output_metadata_file <- file.path(output_dir, paste0(study_id, "_metadata.tsv"))
+
+# Create the directory if it doesn't exist.
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir,  recursive = TRUE)
+}
+```
+
+Connect to the sqlite file. 
+
+```{r}
+# Make connection to sqlite database file
+sra_con <- DBI::dbConnect(RSQLite::SQLite(), sqlite_file)
+```
+
+## Find information on our selected SRA project id 
+
+`sqlite` databases are made up of a set of tables, much like the data frames we have been using. 
+We need to create variables that point to each table that we want to use with `dplyr`.
+
+Using `dplyr::tbl()`, create an object that refers to the `sra` table from the sqlite connection: `sra_con`, to the sqlite file, `sqlite_file`.
+
+```{r}
+sra_table <- dplyr::tbl(sra_con, "sra") 
+```
+
+Create an object that refers to the `study` table from the same sqlite connection/file..
+
+```{r}
+study_table <- dplyr::tbl(sra_con, "study")
+```
+
+Use the `d*b*plyr` extension of `dplyr` functions to collect information related to our declared `study_id`.
+In this context, these transformation steps that you'll recognize (`filter()`, `inner_join()`) are working on the sqlite database directly (using `dbplyr`), which is why the `as.data.frame()` step is required at the end to bring the data into the R environment as a standard data frame. 
+
+```{r}
+# Use the sqlite connection table to apply functions to it
+sra_df <- sra_table %>% 
+  # Filter to the study_id we are looking for
+  dplyr::filter(study_accession == study_id) %>% 
+  # Inner join to the study table that has more specific info about the study
+  dplyr::inner_join(study_table, by = "study_accession") %>% 
+  # We need to do this so the dbplyr queries are transformed to a data frame
+  as.data.frame() 
+```
+
+## Retrieve sample-level information
+
+Create a vector of sample ids that are related to our `study_id`.
+
+```{r}
+# Pull out sample accessions for the corresponding study
+sample_accessions <- sra_df %>% 
+  dplyr::pull(sample_accession)
+```
+
+Connect to `sample` table in our sqlite connection, `sra_con`.
+
+```{r}
+sample_table <- dplyr::tbl(sra_con, "sample") 
+```
+
+Use `dbplyr` functions to filter the `sample_table` to only the samples related to our `study_id`.
+
+```{r}
+# Filter the sample_table of the sqlite file
+sample_df <- sample_table %>% 
+  # Collect the samples that we identified in the previous set of steps
+  dplyr::filter(sample_accession %in% sample_accessions) %>%
+  # Turn into a data.frame
+  as.data.frame()
+```
+
+## Clean the metadata
+
+Here we'll do some cleaning. 
+These cleaning steps will be dependent the metadata itself and on what information you are interested in.
+
+```{r}
+cleaned_sample_df <- sample_df %>% 
+  # Here we getting rid of any columns that only consist of NAs
+  dplyr::select(-which(apply(is.na(.), 2, all)))
+```
+
+We're interested in the sample accession and the sample attributes only, so we will use the `dplyr::select()` function to pick the columns we want to retain.
+
+```{r}
+cleaned_sample_df <- cleaned_sample_df %>%
+  dplyr::select(sample_accession,
+                sample_attribute)
+```
+
+### Sample attributes
+
+The metadata we're interested in is in a column called `sample_attribute`, but unfortunately it is in a format that is not usable yet.
+Let's take a look at that column.
+
+```{r}
+cleaned_sample_df$sample_attribute
+```
+
+Notice how this single column contains 5 columns worth of information: `source_name`, `strain`, `tissue`, `age`, and `genotype`.
+We'd prefer the 5 columns!
+
+Luckily there's another package in the Tidyverse that has functionality for splitting up the column, [`tidyr`](https://tidyr.tidyverse.org/), and the function is called `separate()`.
+
+Each column's worth of information is divided up by ` || `, so we can use that to split `sample_attribute` up into individual columns.
+`|` is a special character in regular expressions or regex, which means we need to place `\\` in front of each `|` to escape the character.
+
+First we need to create a character vector that contains the new column names.
+
+```{r}
+# We use the attribute names from above. This character vector will be specific
+# to the experiment you are working with.
+new_columns <- c("source_name", 
+                 "strain", 
+                 "tissue", 
+                 "age", 
+                 "genotype")
+```
+
+
+```{r}
+cleaned_sample_df <- cleaned_sample_df %>%
+  # We first tell separate which column we'd like to separate into multiple
+  # column
+  tidyr::separate(col = sample_attribute,
+                  # Here we need to tell the function what columns to split 
+                  # things *into* - we'll use the vector we created above
+                  into = new_columns,
+                  # What characters can be used to mark the separation between
+                  # items that should become multiple columns
+                  # We need to use \\ in front of each | because | is a 
+                  # special character
+                  sep = " \\|\\| ")
+```
+
+Let's take a look at our **new** columns.
+
+```{r}
+cleaned_sample_df %>%
+  dplyr::select(new_columns)
+```
+
+This is certainly _better_, but it's not quite what we want yet.
+We'll want to remove the words before the `:` in each column.
+We can use `dplyr::mutate()` and yet another Tidyverse package, [`stringr`](https://stringr.tidyverse.org/).
+
+Let's first look at how we can use `stringr::str_extract()` to get only the relevant information we want. 
+Here the relevant information is everything after the pattern `: `.
+We'll use `source_name` as an example.
+What `.*` does below is say that the pattern we want to _extract_ from `source_name` is everything before `: `.
+
+```{r}
+stringr::str_extract(cleaned_sample_df$source_name, ".*: ")
+```
+
+Using `.*:` returns everything we want to remove from this column.
+We can use this same approach with `stringr::str_remove()` to remove everything before and including `: `:
+
+```{r}
+stringr::str_remove(cleaned_sample_df$source_name, ".*: ")
+```
+
+This is exactly what we want to keep in the `source_name` column! 
+
+Now we're ready to use `stringr::str_remove()` with `dplyr::mutate()` to get some cleaned metadata!
+We'll actually use `dplyr::mutate_at()`, which will apply the function *at* each column we specify.
+
+```{r}
+cleaned_sample_df <- cleaned_sample_df %>%
+  # We can use the same character vector as before to specify which columns
+  # we want to apply stringr::str_remove() at
+  dplyr::mutate_at(new_columns,
+                   # This tells mutate_at to apply stringr::str_remove where
+                   # the column is the first argument to stringr::str_remove -
+                   # the string we are removing a pattern from
+                  ~ stringr::str_remove(., ".*: "))
+```
+
+Let's take a look at our mutated columns.
+
+```{r}
+head(cleaned_sample_df)
+```
+
+### Adding run accessions
+
+Run accessions in SRA essentially correspond to libraries.
+refine.bio, and often other resources dealing with processed RNA-seq data, use run accessions because that is what usually corresponds to FASTQ files.
+Multiple runs can map to the same sample accession, but a run will only map to a single sample accession.
+To use this metadata with refine.bio expression values, we'll want to include the run accession for each sample.
+We have that information in `sra_df` already.
+
+```{r}
+cleaned_sample_df <- sra_df %>%
+  # Select only the relevant accessions, run and sample, from sra_df to
+  # join to our cleaned metadata
+  dplyr::select(run_accession,
+                sample_accession) %>%
+  # This effectively "tacks on" the run accessions as the first column of
+  # our sample metadata
+  dplyr::inner_join(cleaned_sample_df, 
+                    by = "sample_accession")
+```
+
+## Write the sample_df to TSV file
+
+```{r}
+cleaned_sample_df %>% 
+  readr::write_tsv(output_metadata_file) 
+```
+
+### Print out session info
+
+```{r}
+sessionInfo()
+```

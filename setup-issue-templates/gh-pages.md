@@ -1,0 +1,1 @@
+Turn on GitHub pages under `Settings` > `Options` > `GitHub Pages`. Use the default branch as the Source.

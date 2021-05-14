@@ -1,0 +1,102 @@
+name: Manually trigger issue creation for standard set up
+
+# This is a manually triggered workflow
+# https://docs.github.com/en/actions/reference/events-that-trigger-workflows#workflow_dispatch
+# https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow#running-a-workflow-on-github
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: training-modules release tag for training workshop
+        required: true
+
+jobs:
+  # This runs a single job that creates issues from files 
+  createIssuesFromFile:
+    runs-on: ubuntu-latest
+    
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+
+      # Check out  
+      - uses: actions/checkout@v2
+      
+      # Issue for turning on GitHub pages
+      - name: Create GitHub Pages issue
+        uses: peter-evans/create-issue-from-file@v2.3.2
+        with:
+          title: Turn on GitHub Pages
+          content-filepath: ./setup-issue-templates/gh-pages.md
+          labels: automated training issue
+      
+      # Issue for turning on branch protection
+      - name: Create branch protection issue
+        uses: peter-evans/create-issue-from-file@v2.3.2
+        with:
+          title: Set up branch protection - pull requests required
+          content-filepath: ./setup-issue-templates/branch-protection.md
+          labels: automated training issue
+
+      # Issue for deleting and renaming directories
+      - name: Create issue for deleting irrelevant folders
+        uses: peter-evans/create-issue-from-file@v2.3.2
+        with:
+          title: Delete irrelevant workshop directories and rename
+          content-filepath: ./setup-issue-templates/delete-directories-and-rename.md
+          labels: automated training issue
+      
+      # Issue updating `_config.yaml`
+      - name: Create issue for _config.yaml
+        uses: peter-evans/create-issue-from-file@v2.3.2
+        with:
+          title: Update _config.yaml to use values relevant to this workshop
+          content-filepath: ./setup-issue-templates/update-config.md
+          labels: automated training issue   
+           
+      # Issue for header pages
+      - name: Create issue for setting up header pages
+        uses: peter-evans/create-issue-from-file@v2.3.2
+        with:
+          title: Update the pages that will appear in the header
+          content-filepath: ./setup-issue-templates/update-header-pages.md
+          labels: automated training issue
+      
+      # Issue for adding PDF versions of slides
+      - name: Create issue for slides
+        uses: peter-evans/create-issue-from-file@v2.3.2
+        with:
+          title: Add PDF versions of slides to `slides`
+          content-filepath: ./setup-issue-templates/pdf-slides.md
+          labels: automated training issue, slides
+
+      # Issue for creating a draft version of schedule
+      - name: Create draft schedule issue
+        uses: peter-evans/create-issue-from-file@v2.3.2
+        with:
+          title: Draft version of schedule
+          content-filepath: ./setup-issue-templates/draft-schedule.md
+          labels: automated training issue, schedule
+
+      # Issue for creating a training-specific release of training-modules
+      - name: Create issue for training-specific release
+        uses: peter-evans/create-issue-from-file@v2.3.2
+        with:
+          title: Create ${{ github.event.inputs.tag }} release of training-modules
+          content-filepath: ./setup-issue-templates/workshop-release.md
+          labels: automated training issue
+      
+      # Issue for creating a final version of schedule
+      - name: Create final schedule issue
+        uses: peter-evans/create-issue-from-file@v2.3.2
+        with:
+          title: Final version of schedule
+          content-filepath: ./setup-issue-templates/final-schedule.md
+          labels: automated training issue, schedule, blocked
+
+      # Issue for updating README
+      - name: Create issue for updating README
+        uses: peter-evans/create-issue-from-file@v2.3.2
+        with:
+          title: Update README to be user-facing (remove instructions)
+          content-filepath: ./setup-issue-templates/user-facing-readme.md
+          labels: automated training issue
