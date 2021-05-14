@@ -1,5 +1,6 @@
 ---
 title: Guidelines for posting an error to Slack
+nav_title: Posting an Error
 ---
 <p><img style = "padding: 0 15px; float: left;" src = "screenshots/slack-cancer-data-science-logo.png" width = "75"></p>
 <p style="margin-top: 20px;"> </p>
@@ -9,38 +10,38 @@ If you haven't joined Cancer Data Science Slack yet, you will need to follow the
 set up procedures described here</a>.</p>
 <br>
 During and after the workshop, we encourage you to post your code error question to your Slack training channel.
-But, asking questions about code in such a way that others can readily help you can be tricky and is a skill itself!
+But asking questions about code in such a way that others can readily help you can be tricky and is a skill in itself!
 
 Here we've laid out guidelines for posting your question so that your peers and the CCDL team will readily be able to help you find a solution.
 Following these guidelines will take more time but it will increase your chances of getting speedier responses that more adequately help you resolve your error!
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+**Table of Contents** 
 
 - [What information should a question about code include?](#what-information-should-a-question-about-code-include)
 - [A troubleshooting example](#a-troubleshooting-example)
   - [Step 1) Do what you can to try to solve the error yourself (but don't tire yourself out!)](#step-1-do-what-you-can-to-try-to-solve-the-error-yourself-but-dont-tire-yourself-out)
   - [Step 2) Draft out the description of your error post.](#step-2-draft-out-the-description-of-your-error-post)
-      - [Where is this error occurring; what notebook/chunk?](#where-is-this-error-occurring-what-notebookchunk)
-      - [What is the goal of this code?](#what-is-the-goal-of-this-code)
-      - [What is the code that is producing this error?](#what-is-the-code-that-is-producing-this-error)
-      - [What is the error or problematic outcome?](#what-is-the-error-or-problematic-outcome)
-      - [(Optional) What have you tried thus far?](#optional-what-have-you-tried-thus-far)
+    - [Where is this error occurring; what notebook/chunk?](#where-is-this-error-occurring-what-notebookchunk)
+    - [What is the goal of this code?](#what-is-the-goal-of-this-code)
+    - [What is the code that is producing this error?](#what-is-the-code-that-is-producing-this-error)
+    - [What is the error or problematic outcome?](#what-is-the-error-or-problematic-outcome)
+    - [(Optional) What have you tried thus far?](#optional-what-have-you-tried-thus-far)
   - [Step 3) Post to Slack!](#step-3-post-to-slack)
-      - [Step 3a) Post the headline of your problem.](#step-3a-post-the-headline-of-your-problem)
-      - [Step 3b) In the thread of your headline, post the description you crafted in Step 2.](#step-3b-in-the-thread-of-your-headline-post-the-description-you-crafted-in-step-2)
+    - [Step 3a) Post the headline of your problem.](#step-3a-post-the-headline-of-your-problem)
+    - [Step 3b) In the thread of your headline, post the description you crafted in Step 2.](#step-3b-in-the-thread-of-your-headline-post-the-description-you-crafted-in-step-2)
   - [Step 4) Look for responses (in the same thread)!](#step-4-look-for-responses-in-the-same-thread)
-  - [Posting a code error question checklist](#posting-a-code-error-question-checklist)
+- [Checklist for posting a code error question](#checklist-for-posting-a-code-error-question)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# What information should a question about code include?
+## What information should a question about code include?
 
 We consider the themes of a good troubleshooting post to be `context` and `specificity`.
 The more context you can provide, and the more specific you can be about your problem, the easier it will be for someone to help you.
 
-**Overall your posted code question should include:**
+**Your posted code question should include:**
 
 - Where is this error occurring (notebook/chunk)?
 - What is the goal of this code?
@@ -52,15 +53,15 @@ The more context you can provide, and the more specific you can be about your pr
 
 To demonstrate what we mean by these guidelines we will walk through an example.
 
-# A troubleshooting example
+## A troubleshooting example
 
-In this example, I'm using our exercise notebook `04a-intro_to_R_exercise.Rmd`.
+In this example, we're using our exercise notebook `04a-intro_to_R_exercise.Rmd`.
 
-Below I'm showing a screenshot of what this error would look like when encountering it on [our RStudio Server](../virtual-setup/rstudio-login.md).
+Below is a screenshot of what this error would look like when encountering it on [our RStudio Server](../virtual-setup/rstudio-login.md).
 
 <img src = "screenshots/file.path-error.png" width = "800">
 
-## Step 1) Do what you can to try to solve the error yourself (but don't tire yourself out!)
+### Step 1) Do what you can to try to solve the error yourself (but don't tire yourself out!)
 
 The best way to learn how to solve errors in code is to figure them out yourself.
 So try to explore the error a bit - but we are also here to help you so don't hesitate to ask for help! 
@@ -79,7 +80,7 @@ In the chunking example below, each highlighted portion is something you could r
 
 - [Restart your R Session](../virtual-setup/rstudio-login.md#stoppingstarting-rstudio-sessions) and go back to the beginning of your notebook to re-run all of your code in order to make sure you haven't missed any vital steps! Order matters!
 
-## Step 2) Draft out the description of your error post.
+### Step 2) Draft out the description of your error post.
 
 You may want to open up a text editor to write this out before posting (this is a personal preference thing).
 
@@ -87,7 +88,7 @@ For our example error, here's how each of the "four points" (and the optional on
 
 <img src = "screenshots/breakdown.png">
 
-### Where is this error occurring; what notebook/chunk?
+#### Where is this error occurring; what notebook/chunk?
 
 - In our workshop, notebook references tend to make sense to provide, however, more generally this should be any context around __where__ you've encountered this error.
 
@@ -98,7 +99,7 @@ For our example error, here's how each of the "four points" (and the optional on
 *For our example:*  
 <img src = "screenshots/where-is-the-error.png" width = "600">
 
-### What is the goal of this code?  
+#### What is the goal of this code?  
 
 - Describing your end goals for this code will provide context for others so they can tailor their advice with your goal in mind.
     *Examples of information you may want to include (whenever it is applicable):*
@@ -117,7 +118,7 @@ For our example error, here's how each of the "four points" (and the optional on
 *For our example:*  
 <img src = "screenshots/what-is-the-goal.png" width = "600">
 
-### What is the code that is producing this error?
+#### What is the code that is producing this error?
 
 - [Use backticks (```) to format your code.](../virtual-setup/slack-procedures.md#adding-code-blocks-to-messages) (How to do this in the next step).
 Formatting your code makes it easier for others to distinguish between your code and the words in your post where you are otherwise describing the problem.
@@ -128,7 +129,7 @@ Being able to copy and paste the code itself makes it much easier for others to 
 *For our example:*  
 <img src = "screenshots/what-is-the-code.png" width = "600">
 
-### What is the error or problematic outcome?  
+#### What is the error or problematic outcome?  
 
 - Include any error messages verbatim.
 Also preferably not a screenshot so others can copy-paste for Google searching (A reminder to also try Google searching yourself before posting - It's often surprisingly helpful!).
@@ -139,7 +140,7 @@ Also preferably not a screenshot so others can copy-paste for Google searching (
 *For our example:*  
 <img src = "screenshots/what-is-the-error.png" width = "600">
 
-### (Optional) What have you tried thus far?  
+#### (Optional) What have you tried thus far?  
 
 - This is considered an optional point because we understand you also may not know where to begin (and that is definitely okay - we are here to help!)
 
@@ -150,11 +151,11 @@ Also preferably not a screenshot so others can copy-paste for Google searching (
 *For our example:*  
 <img src = "screenshots/what-have-you-tried.png" width = "600">
 
-## Step 3) Post to Slack!
+### Step 3) Post to Slack!
 
 First, navigate to your particular workshop's training channel.
 
-### Step 3a) Post the headline of your problem.
+#### Step 3a) Post the headline of your problem.
 
 To keep new questions and responses from getting lost in the messaging board, we strongly encourage you to make a "headline" that is one post and put the longer description you crafted in step 2 in the thread of your headline.
 
@@ -168,7 +169,7 @@ To navigate to Slack threads, you can can click speech bubble in the corner of y
 You should try to keep all further messages and correspondence about that question in the same Slack thread.
 Follow up problems in the same section of code should also be kept to this same thread you started.
 
-### Step 3b) In the thread of your headline, post the description you crafted in [Step 2](#step-2-draft-out-your-question-youll-post).
+#### Step 3b) In the thread of your headline, post the description you crafted in [Step 2](#step-2-draft-out-your-question-youll-post).
 
 Navigate to the Slack thread of your "headline".
 You can can click speech bubble in the corner of your post: <img src = "screenshots/thread-button.png" width = "150">
@@ -195,7 +196,7 @@ If all looks set, click the green arrow to add it to the thread!
 
 <img src = "screenshots/slack-edit-message.png" width = "500">
 
-## Step 4) Look for responses (in the same thread)!
+### Step 4) Look for responses (in the same thread)!
 
 We don't want anyone's questions or responses to get lost, especially after you've followed these careful steps to craft it!
 
@@ -213,7 +214,7 @@ Lastly, it is helpful for the person who has responded to you or others who migh
 
 Congrats on solving your error! 🎉
 
-## Posting a code error question checklist
+## Checklist for posting a code error question
 
 *Here's a checklist you can use to craft your question post:*
 
