@@ -1,16 +1,16 @@
-title: CCDL Training
-training_title: MONTH-TOPIC
+title: CCDL Virtual Workshop
+training_title: 2021 June Training
 # The name of the repository (e.g., 2020-may-training)
 # We use training-specific-template to help with development
 repository: training-specific-template
 # Full URL to the repository
 # Again, using training-specific-template to aid in development
 repository_url: https://github.com/AlexsLemonade/training-specific-template
-start_date: YYYY-MM-DD
-end_date: YYYY-MM-DD
+start_date: 2021-06-28
+end_date: 2021-07-02
 # Specific release in AlexsLemonade/training-modules
-# We use master to make development easier
-release_tag: master
+# We use `main` to make development easier
+release_tag: main
 # The Docker user will almost always be ccdl, which is why this is here
 docker_user: ccdl
 docker_repo: DOCKER-REPOSITORY
