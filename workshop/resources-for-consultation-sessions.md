@@ -16,7 +16,7 @@ On this page, we've assembled some resources you may find helpful during these s
 - [Obtaining practice datasets](#obtaining-practice-datasets)
   - [Microarray data](#microarray-data)
   - [RNA-seq data](#rna-seq-data)
-- [Transcriptome indices for non-human organisms](#transcriptome-indices-for-non-human-organisms)
+- [Transcriptome indices for common organisms](#transcriptome-indices-for-common-organisms)
   - [_Homo sapiens_](#homo-sapiens)
   - [_Mus musculus_](#mus-musculus)
   - [_Danio rerio_](#danio-rerio)
@@ -105,7 +105,7 @@ You can open the Rmd file as normal.
 
 End SRAdb section -->
 
-## Transcriptome indices for non-human organisms
+## Transcriptome indices for common organisms
 
 During the introduction to bulk RNA-seq module, we used human data and included a transcriptome index for human in `training-modules/RNA-seq/index/`.
 
