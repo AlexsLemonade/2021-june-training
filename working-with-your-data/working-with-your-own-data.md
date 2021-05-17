@@ -20,8 +20,9 @@ We will email you with a reminder 6 months from now so you can make sure to remo
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+**Table of Contents**
 
+- [Things to know before uploading your data](#things-to-know-before-uploading-your-data)
 - [Load data that is online (from a url)](#load-data-that-is-online-from-a-url)
 - [Load data from an a ssh server](#load-data-from-an-a-ssh-server)
 - [Upload large files (> 1Gb) from your own computer](#upload-large-files--1gb-from-your-own-computer)
@@ -53,8 +54,9 @@ If you are retrieving your data from online, perhaps from a publicly available r
 
 **Step 2)** Copy over the [wget template script]({{site.repository_url}}/tree/master/working-with-your-data/template-scripts/wget-TEMPLATE.sh).
 
-You'll find the `wget` template script in the `template-script/` folder.
-In the RStudio Server, you can click the check mark next to the file name, then go to `More` > and choose `Copy To`.
+You'll find the `wget` template script in the `shared-data/template-scripts/` directory.
+In the RStudio Server, you can click the check mark next to the file name, then go to `More` > and choose `Copy To` to make a copy with a new name somewhere convenient in your home directory.
+
 
 **Step 3)** Set up your `wget` command in the template script we started for you.
 
