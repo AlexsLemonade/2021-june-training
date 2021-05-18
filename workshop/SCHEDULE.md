@@ -23,14 +23,14 @@ A tentative schedule for the June 2021 CCDL Virtual Training Workshop appears be
 | 5:00  PM    | End             |
 | **Day 2**   | **2021-06-29**  <br> [_**Introduction to Single-cell RNA-seq, Day 1**_](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/README.md) | 
 | 12:00 PM    | scRNA-seq: Introduction | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
-| 1:00 PM     | scRNA-seq:  Quantification and general QC of tag-based data | Zoom: [Main Session](../virtual-setup/Single-cell RNA-seq)|
+| 1:00 PM     | scRNA-seq:  Quantification and general QC of tag-based data | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call)|
 | 2:00 PM     | scRNA-seq: Importing data and filtering cells  | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
 | 3:00 PM     | Questions and introduction to the exercise | Zoom: [Breakout Rooms](../virtual-setup/zoom-procedures.md#using-zoom-breakout-rooms) |
 |             | [Consultation session](workshop-structure.md#consultation-sessions) | [Slack channel](../virtual-setup/slack-procedures.md#general-use) |
 | 5:00  PM    | End             |
 | **Day 3**   | **2021-06-30**  <br> [_**Single-cell RNA-seq, Day 2**_](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/README.md) | 
 | 12:00 PM    | scRNA-seq: Normalization of expression data | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
-| 1:00 PM     | scRNA-seq:  Dimension reduction & visualization | Zoom: [Main Session](../virtual-setup/Single-cell RNA-seq)|
+| 1:00 PM     | scRNA-seq:  Dimension reduction & visualization | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call)|
 | 2:00 PM     | scRNA-seq: Clustering and marker identification | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
 | 3:00 PM     | Questions and introduction to the exercise | Zoom: [Breakout Rooms](../virtual-setup/zoom-procedures.md#using-zoom-breakout-rooms) |
 |             | [Consultation session](workshop-structure.md#consultation-sessions) | [Slack channel](../virtual-setup/slack-procedures.md#general-use) |
