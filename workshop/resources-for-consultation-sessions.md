@@ -14,8 +14,13 @@ On this page, we've assembled some resources you may find helpful during these s
 - [Module cheatsheets](#module-cheatsheets)
 - [Working with your own data on RStudio Server](#working-with-your-own-data-on-rstudio-server)
 - [Obtaining practice datasets](#obtaining-practice-datasets)
-  - [Microarray data](#microarray-data)
-  - [RNA-seq data](#rna-seq-data)
+  - [refine.bio](#refinebio)
+    - [Microarray data on refine.bio](#microarray-data-on-refinebio)
+    - [Bulk RNA-seq data on refine.bio](#bulk-rna-seq-data-on-refinebio)
+  - [Single-cell RNA-seq data](#single-cell-rna-seq-data)
+    - [_Tabula Muris_ data](#tabula-muris-data)
+    - [Human Cell Atlas data](#human-cell-atlas-data)
+    - [Reading `loom` format data in R](#reading-loom-format-data-in-r)
 - [Transcriptome indices for common organisms](#transcriptome-indices-for-common-organisms)
   - [_Homo sapiens_](#homo-sapiens)
   - [_Mus musculus_](#mus-musculus)
@@ -45,6 +50,8 @@ If your data is larger than 50GB, please contact an instructor.
 
 ## Obtaining practice datasets
 
+### refine.bio 
+
 The Childhood Cancer Data Lab built and maintains [refine.bio](https://www.refine.bio/), resource of uniformly processed transcriptomic data obtained from publicly available sources.
 You can read more about how we process data in refine.bio in [our documentation](http://docs.refine.bio/en/latest/index.html).
 
@@ -55,7 +62,7 @@ See the ["Getting Started" section](https://alexslemonade.github.io/refinebio-ex
 
 You can start by searching [refine.bio](https://www.refine.bio/) for keywords relevant to your scientific questions and filtering to the organism and technology (e.g., microarray vs. RNA-seq; refine.bio contains both) you're interested in.
 
-### Microarray data
+#### Microarray data on refine.bio
 
 In this version of our workshop, we won't work with microarray data, but there are hundreds of thousands of microarray samples available from refine.bio.
 The microarray datasets you can download from the refine.bio web interface are quantile normalized and are distributed as TSV files you can read into R using functions we cover in training.
@@ -63,7 +70,7 @@ The metadata is included in your download in a TSV file that starts with `metada
 You may find our [microarray example notebooks](https://alexslemonade.github.io/refinebio-examples/02-microarray/00-intro-to-microarray.html) for working with refine.bio data helpful with your [differential expression](https://alexslemonade.github.io/refinebio-examples/02-microarray/differential-expression_microarray_01_2-groups.html), [dimension reduction](https://alexslemonade.github.io/refinebio-examples/02-microarray/dimension-reduction_microarray_01_pca.html), or [GSEA pathway analyses](https://alexslemonade.github.io/refinebio-examples/02-microarray/pathway-analysis_microarray_02_gsea.html), to name a few.
 Note that our training material is largely RNA-seq specific, so if you obtain microarray data from refine.bio, you should not expect to use the exact same code as we do in training.
 
-### RNA-seq data
+#### Bulk RNA-seq data on refine.bio
 
 The format of the RNA-seq data you can download from the web interface of refine.bio data will be slightly different from what we cover in training.
 We summarize our data to the gene-level with `tximport` ([docs](http://docs.refine.bio/en/latest/main_text.html#tximport)), instead of `tximeta` like we do in training, before you download it.
@@ -104,6 +111,45 @@ cp -avr shared-data/working-with-your-data/retrieve-SRAdb-metadata.Rmd
 You can open the Rmd file as normal.
 
 End SRAdb section -->
+
+### Single-cell RNA-seq data
+
+The CCDL does not currently have a repository of single-cell RNA-seq data that we can point you to for practice data sets.
+However, we do have a couple of sources of data that you might find useful to practice with.
+
+#### _Tabula Muris_ data
+
+The first is a more extensive set of the [_Tabula Muris_](https://tabula-muris.ds.czbiohub.org) data (mouse tissue) that we worked with in the example datasets.
+These samples, already processed by `salmon alevin`, can be found in the `~/shared-data/training-data/tabula-muris/alevin` directory.
+Metadata, including tissue of origin for each sample (since the sample names themselves are not informative), can be found in `~/training-modules/scRNA-seq/data/tabula-muris/TM_droplet_metadata.csv`. 
+Note that this data is given at the cell level: simplifying the table to the sample level is a good opportunity to practice some data wrangling skills!
+
+#### Human Cell Atlas data
+
+Another potential source for processed single cell data is the [Human Cell Atlas Data Portal](https://data.humancellatlas.org/). 
+To download a data set, first browse or search to find a project of interest. 
+You will then select "Project Matrices" to download the processed single-cell expression data.
+Scroll down to the "DCP Generated Matrices" section, as the data here will be uniformly processed and in a standard data format.
+That format is called `loom`, and we can read it into `R` in a fairly straightforward way.
+Once you find a loom file listed (not all projects have one, unfortunately), you have two options: 
+
+1. Download the loom file to your computer (look for the tiny icon with the arrow pointing down) and upload it to the server [following these instructions](../working-with-your-data/working-with-your-own-data.md#working-with-your-own-data#upload-large-files--1gb-from-your-own-computer).
+   
+2. Click the "Copy download link" button (the tiny clipboard icon) and then use that URL to download the file directly to the RStudio server [following these instructions](../working-with-your-data/working-with-your-own-data.md#working-with-your-own-data#load-data-that-is-online-from-a-url).
+Be sure to put quotes around the _very long_ URL that is provided, and specify the filename for the download with the `-O` option.
+
+#### Reading `loom` format data in R
+
+Once you have a `.loom` file on your computer and have defined the , you can use the following commands in R to import the data as a `SingleCellExperiment`-compatible object.
+
+```r
+loomfile <-  file.path("path", "to", "file.loom")
+sce <- LoomExperiment::import(loomfile, type = "SingleCellLoomExperiment")
+```
+
+All of the `SingleCellExperiment` commands that we have demonstrated should then work!
+You will want to be sure to look at `rowData()` and `colData()`, as some of the contents will be different from what we have seen in previous data sets. 
+Some of the QC calculations may have already been performed!
 
 ## Transcriptome indices for common organisms
 
