@@ -123,6 +123,7 @@ The first is a more extensive set of the [_Tabula Muris_](https://tabula-muris.d
 These samples, already processed by `salmon alevin`, can be found in the `~/shared-data/training-data/tabula-muris/alevin` directory.
 Metadata, including tissue of origin for each sample (since the sample names themselves are not informative), can be found in `~/training-modules/scRNA-seq/data/tabula-muris/TM_droplet_metadata.csv`. 
 Note that this data is given at the cell level: simplifying the table to the sample level is a good opportunity to practice some data wrangling skills!
+(It is also a `CSV` file; don't forget to use `readr::read_csv()` when loading it!)
 
 #### Human Cell Atlas data
 
