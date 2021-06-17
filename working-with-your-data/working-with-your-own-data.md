@@ -64,12 +64,15 @@ The most simple `wget` command just needs the URL to pull the file from.
 
 *Template:*
 ```
-wget <URL>
+wget "<URL>"
 ```
+
+The quote characters are not always required, but are a good practice in case the URL includes any strange characters that might cause problems.
+
 
 *Specific example:* Here's an example of us downloading a file from ArrayExpress
 ```
-wget https://www.ebi.ac.uk/arrayexpress/files/E-GEOD-67851/E-GEOD-67851.processed.1.zip
+wget "https://www.ebi.ac.uk/arrayexpress/files/E-GEOD-67851/E-GEOD-67851.processed.1.zip"
 ```
 
 By default, the file will be saved to the current directory and the file name it had from its origin (so with the above example `E-GEOD-67851.processed.1.zip`).
@@ -79,14 +82,14 @@ For that, we can use the `-O`, or `output` option with our `wget` command and sp
 
 *Template:*
 ```
-wget -O <FILE_PATH_TO_SAVE_TO> <URL>
+wget -O <FILE_PATH_TO_SAVE_TO> "<URL>"
 ```
 
 *Specific example:* Here's an example where we will download that same array express file, but instead save it to the `data` folder and call it `some_array_data.zip`.
 (Best to keep the file extension consistent to avoid troubles!)
 
 ```
-wget -O data/some_array_data.zip https://www.ebi.ac.uk/arrayexpress/files/E-GEOD-67851/E-GEOD-67851.processed.1.zip
+wget -O data/some_array_data.zip "https://www.ebi.ac.uk/arrayexpress/files/E-GEOD-67851/E-GEOD-67851.processed.1.zip"
 ```
 
 `-O` is one of many `wget` command options.
