@@ -128,19 +128,20 @@ Note that this data is given at the cell level: simplifying the table to the sam
 
 Another potential source for processed single cell data is the [Human Cell Atlas Data Portal](https://data.humancellatlas.org/). 
 To download a data set, first browse or search to find a project of interest. 
-You will then select "Project Matrices" to download the processed single-cell expression data.
-Scroll down to the "DCP Generated Matrices" section, as the data here will be uniformly processed and in a standard data format.
+Click on the project name to see an abstract and other information for the project.
+You can then select "Project Matrices" from the left side to download the processed single-cell expression data.
+Scroll down to the "DCP Generated Matrices" section on the "Project Matrices" page, as the data here will be uniformly processed and in a standard data format.
 That format is called `loom`, and we can read it into `R` in a fairly straightforward way.
 Once you find a loom file listed (not all projects have one, unfortunately), you have two options: 
 
+1. Click the "Copy download link" button (the tiny clipboard icon) and then use that URL to download the file directly to the RStudio server [following these instructions](../working-with-your-data/working-with-your-own-data.md#working-with-your-own-data#load-data-that-is-online-from-a-url).
+Be sure to put quotes around the _very long_ URL that is provided, and specify a filename for the download with the `-O` option.
+
 1. Download the loom file to your computer (look for the tiny icon with the arrow pointing down) and upload it to the server [following these instructions](../working-with-your-data/working-with-your-own-data.md#working-with-your-own-data#upload-large-files--1gb-from-your-own-computer).
-   
-2. Click the "Copy download link" button (the tiny clipboard icon) and then use that URL to download the file directly to the RStudio server [following these instructions](../working-with-your-data/working-with-your-own-data.md#working-with-your-own-data#load-data-that-is-online-from-a-url).
-Be sure to put quotes around the _very long_ URL that is provided, and specify the filename for the download with the `-O` option.
 
 #### Reading `loom` format data in R
 
-Once you have a `.loom` file on your computer and have defined the , you can use the following commands in R to import the data as a `SingleCellExperiment`-compatible object.
+Once you have a `.loom` file on the server, you can use the following commands in R to import the data as a `SingleCellExperiment`-compatible object.
 
 ```r
 loomfile <-  file.path("path", "to", "file.loom")
