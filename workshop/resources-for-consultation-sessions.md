@@ -127,9 +127,13 @@ Note that this data is given at the cell level: simplifying the table to the sam
 
 #### Human Cell Atlas data
 
-Another potential source for processed single cell data is the [Human Cell Atlas Data Portal](https://data.humancellatlas.org/). 
+Another potential source for processed single cell data is the [Human Cell Atlas (HCA) Data Portal](https://data.humancellatlas.org/). 
+The data here is from a mix of technologies, including both 10X, Smart-seq2, and DropSeq. 
+The HCA has standardized processing pipelines for 10X and Smart-seq2, though it seems that most of the processed data is 10X, so we recommend focusing on those projects.
+
 To download a data set, first browse or search to find a project of interest. 
 Click on the project name to see an abstract and other information for the project.
+
 You can then select "Project Matrices" from the left side to download the processed single-cell expression data.
 Scroll down to the "DCP Generated Matrices" section on the "Project Matrices" page, as the data here will be uniformly processed and in a standard data format.
 That format is called `loom`, and we can read it into `R` in a fairly straightforward way.
@@ -147,11 +151,15 @@ Once you have a `.loom` file on the server, you can use the following commands i
 ```r
 loomfile <-  file.path("path", "to", "file.loom")
 sce <- LoomExperiment::import(loomfile, type = "SingleCellLoomExperiment")
+# the first assay matrix should be named "counts"
+assayNames(sce)[1] <- "counts"
 ```
 
-All of the `SingleCellExperiment` commands that we have demonstrated should then work!
-You will want to be sure to look at `rowData()` and `colData()`, as some of the contents will be different from what we have seen in previous data sets. 
-Some of the QC calculations may have already been performed!
+The last command is to be sure that the main data matrix, which contains count data, has the name that the `SingleCellExperiment` commands expect.
+Once that is done, all of the `SingleCellExperiment` commands that we have demonstrated should work!
+You will want to be sure to look at `rowData()` and `colData()`, as some of the contents will be different from what we have seen in previous data sets (and may vary among projects). 
+Some of the QC calculations may have already been performed, but the data will not be filtered or normalized. 
+You will need to perform those steps on your own.
 
 ## Transcriptome indices for common organisms
 
