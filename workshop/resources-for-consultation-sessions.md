@@ -151,11 +151,21 @@ Once you have a `.loom` file on the server, you can use the following commands i
 ```r
 loomfile <-  file.path("path", "to", "file.loom")
 sce <- LoomExperiment::import(loomfile, type = "SingleCellLoomExperiment")
+
 # the first assay matrix should be named "counts"
 assayNames(sce)[1] <- "counts"
 ```
 
 The last command is to be sure that the main data matrix, which contains count data, has the name that the `SingleCellExperiment` commands expect.
+
+The gene and cell identifiers are stored in `rowData` and `colData` respectively, but those identifiers aren't used as row names and column names.
+To make the format a little closer to what we work with during instruction (and so we can visualize individual genes), we need to do the following:
+
+```r
+rownames(sce) <- rowData(sce)$Gene
+colnames(sce) <- colData(sce)$CellID
+```
+
 Once that is done, all of the `SingleCellExperiment` commands that we have demonstrated should work!
 You will want to be sure to look at `rowData()` and `colData()`, as some of the contents will be different from what we have seen in previous data sets (and may vary among projects). 
 Some of the QC calculations may have already been performed, but the data will not be filtered or normalized. 
