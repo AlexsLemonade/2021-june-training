@@ -23,23 +23,26 @@ A tentative schedule for the June 2021 CCDL Virtual Training Workshop appears be
 | 5:00  PM    | End             |
 | **Day 2**   | **2021-06-29**  <br> [_**Introduction to Single-cell RNA-seq, Day 1**_](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/README.md) | 
 | 12:00 PM    | scRNA-seq: Introduction | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
-| 1:00 PM     | scRNA-seq:  Quantification and general QC of tag-based data | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call)|
-| 2:00 PM     | scRNA-seq: Importing data and filtering cells  | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
-| 3:00 PM     | Questions and introduction to the exercise | Zoom: [Breakout Rooms](../virtual-setup/zoom-procedures.md#using-zoom-breakout-rooms) |
+| 12:30 PM     | [scRNA-seq:  Quantification and general QC of tag-based data](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/01-scRNA_quant_qc.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call)|
+| 1:30 PM     | [scRNA-seq: Importing data and filtering cells](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/02-filtering_scRNA.nb.html)  | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
+| 2:30 PM    | [scRNA-seq: Normalization of expression data](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/03-normalizing_scRNA.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
+| 3:30 PM     | Questions and introduction to the exercise | Zoom: [Breakout Rooms](../virtual-setup/zoom-procedures.md#using-zoom-breakout-rooms) |
+|             | [Exercise: scRNA-seq quantification](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/exercise_01-scrna_quant.Rmd)
 |             | [Consultation session](workshop-structure.md#consultation-sessions) | [Slack channel](../virtual-setup/slack-procedures.md#general-use) |
 | 5:00  PM    | End             |
 | **Day 3**   | **2021-06-30**  <br> [_**Single-cell RNA-seq, Day 2**_](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/README.md) | 
-| 12:00 PM    | scRNA-seq: Normalization of expression data | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
-| 1:00 PM     | scRNA-seq:  Dimension reduction & visualization | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call)|
-| 2:00 PM     | scRNA-seq: Clustering and marker identification | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
+| 12:00 PM     | [scRNA-seq:  Dimension reduction & visualization](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/04-dimension_reduction_scRNA.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call)|
+| 1:30 PM     | [scRNA-seq: Clustering and marker identification](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/05-clustering_markers_scRNA.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
 | 3:00 PM     | Questions and introduction to the exercise | Zoom: [Breakout Rooms](../virtual-setup/zoom-procedures.md#using-zoom-breakout-rooms) |
+|             | [Exercise: scRNA-seq clustering](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/exercise_02-scrna_clustering.Rmd)
 |             | [Consultation session](workshop-structure.md#consultation-sessions) | [Slack channel](../virtual-setup/slack-procedures.md#general-use) |
 | 5:00  PM    | End             |         
 | **Day 4**   | **2021-07-01**  <br> [_**Introduction to Pathway Analysis**_](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/pathway-analysis/README.md) | | 
 | 12:00 PM    | Introduction to Pathway Analysis  |  Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
-| 12:30 PM    | Pathway analysis: Over-representation analysis | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
-| 2:00 PM     | Pathway analysis: Gene Set Enrichment Analysis | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) | 
+| 12:30 PM    | [Pathway analysis: Over-representation analysis](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/06-overrepresentation_analysis.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
+| 2:00 PM     | [Pathway analysis: Gene Set Enrichment Analysis](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/07-gene_set_enrichment_analysis.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) | 
 | 3:00 PM     | Questions and introduction to the exercise | Zoom: [Breakout Rooms](../virtual-setup/zoom-procedures.md#using-zoom-breakout-rooms) |
+|             | [Exercise: scRNA-seq pathway analysis](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/exercise_03-scrna-seq_pathway.Rmd)
 |             | [Consultation session](workshop-structure.md#consultation-sessions) | [Slack channel](../virtual-setup/slack-procedures.md#general-use)|
 | 5:00 PM     | End || 
 | **Day 5**   | **2021-07-02**  <br> _**Consultation and Presentations**_ |     
