@@ -10,7 +10,7 @@ start_date: 2021-06-28
 end_date: 2021-07-02
 # Specific release in AlexsLemonade/training-modules
 # We use `master` to make development easier
-release_tag: master
+release_tag: 2021-june
 # The Docker user will almost always be ccdl, which is why this is here
 docker_user: ccdl
 docker_repo: training_rnaseq
