@@ -4,7 +4,7 @@ nav_title: Schedule
 ---
 
 The schedule for the June 2021 CCDL Virtual Training Workshop appears below.
-While we expect to start end each day on time, the timing of individual modules may vary from what is shown. 
+While we expect to start and end each day on time, the timing of individual modules may vary from what is shown. 
  
 
 
