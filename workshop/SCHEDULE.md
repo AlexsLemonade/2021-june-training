@@ -31,7 +31,7 @@ While we expect to start and end each day on time, the timing of individual modu
 |             | [Exercise: scRNA-seq quantification](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/exercise_01-scrna_quant.Rmd)
 |             | [Consultation session](workshop-structure.md#consultation-sessions) | [Slack channel](../virtual-setup/slack-procedures.md#general-use) |
 | 5:00  PM    | End             |
-| **Day 3**   | **2021-06-30**  <br> [_**Single-cell RNA-seq, Day 2**_](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/README.md) | 
+| **Day 3**   | **2021-06-30**  <br> [_**Single-cell RNA-seq, Day 2**_](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/README.md) <br> [Dimension Reduction & Clustering slides (pdf)](../slides/2021-06-30_scRNA-seq_clustering.pdf)| 
 | 12:00 PM     | [scRNA-seq:  Dimension reduction & visualization](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/04-dimension_reduction_scRNA.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call)|
 | 1:30 PM     | [scRNA-seq: Clustering and marker identification](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/05-clustering_markers_scRNA.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
 | 3:00 PM     | Questions and introduction to the exercise | Zoom: [Breakout Rooms](../virtual-setup/zoom-procedures.md#using-zoom-breakout-rooms) |
