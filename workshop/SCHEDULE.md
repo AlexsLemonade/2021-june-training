@@ -38,8 +38,8 @@ While we expect to start and end each day on time, the timing of individual modu
 |             | [Exercise: scRNA-seq clustering](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/exercise_02-scrna_clustering.Rmd)
 |             | [Consultation session](workshop-structure.md#consultation-sessions) | [Slack channel](../virtual-setup/slack-procedures.md#general-use) |
 | 5:00  PM    | End             |         
-| **Day 4**   | **2021-07-01**  <br> [_**Introduction to Pathway Analysis**_](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/pathway-analysis/README.md) <br> [Pathway analysis slides (pdf)](../slides/2021-07-01_Pathway_Analysis.pdf) | | 
-| 12:00 PM    | Introduction to Pathway Analysis  |  Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
+| **Day 4**   | **2021-07-01**  <br> [_**Introduction to Pathway Analysis**_](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/pathway-analysis/README.md) | | 
+| 12:00 PM    | Introduction to Pathway Analysis <br> [Pathway analysis slides (pdf)](../slides/2021-07-01_Pathway_Analysis.pdf)  |  Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
 | 12:30 PM    | [Pathway analysis: Over-representation analysis](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/06-overrepresentation_analysis.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
 | 2:00 PM     | [Pathway analysis: Gene Set Enrichment Analysis](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/07-gene_set_enrichment_analysis.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) | 
 | 3:00 PM     | Questions and introduction to the exercise | Zoom: [Breakout Rooms](../virtual-setup/zoom-procedures.md#using-zoom-breakout-rooms) |
