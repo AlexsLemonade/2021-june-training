@@ -13,7 +13,7 @@ While we expect to start and end each day on time, the timing of individual modu
 
 | Time        | Topic                                          | Location |
 |-------------|------------------------------------------------|----------|
-| **Day 1**   | **2021-06-28** <br> [_**Introduction to R and the Tidyverse**_](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/intro-to-R-tidyverse/README.md)
+| **Day 1**   | **2021-06-28** <br> [_**Introduction to R and the Tidyverse**_](https://github.com/AlexsLemonade/training-modules/blob/master/intro-to-R-tidyverse#readme)
 | 12:00 PM    | Welcome, Introductions and Getting Started  <br> [Workshop Introduction slides (pdf)](../slides/2021-06-28_CCDL_workshop_intro.pdf)  | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
 | 1:00 PM     | [Introduction to Rstudio Server (pdf)](../slides/2021-06-28_Intro_to_Rstudio.pdf) <br> [Introduction to base R](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/intro-to-R-tidyverse/01-intro_to_base_R.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
 | 2:30 PM     | [Introduction to ggplot2](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/intro-to-R-tidyverse/02-intro_to_ggplot2.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
@@ -22,7 +22,7 @@ While we expect to start and end each day on time, the timing of individual modu
 |             | [Exercise: Introduction to R](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/intro-to-R-tidyverse/exercise_02-intro_to_R.Rmd)| | 
 |             | [Consultation session](workshop-structure.md#consultation-sessions) | [Slack channel](../virtual-setup/slack-procedures.md#general-use) |
 | 5:00  PM    | End             |
-| **Day 2**   | **2021-06-29**  <br> [_**Introduction to Single-cell RNA-seq, Day 1**_](https://github.com/AlexsLemonade/training-modules/blob/master/scRNA-seq/README.md) | 
+| **Day 2**   | **2021-06-29**  <br> [_**Introduction to Single-cell RNA-seq, Day 1**_](https://github.com/AlexsLemonade/training-modules/blob/master/scRNA-seq#readme) | 
 | 12:00 PM    | scRNA-seq: [Introduction (pdf)](../slides/2021-06-29_Intro_to_scRNA-seq.pdf) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
 | 12:30 PM     | [scRNA-seq:  Quantification and general QC of tag-based data](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/01-scRNA_quant_qc.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call)|
 | 1:30 PM     | [scRNA-seq: Importing data and filtering cells](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/02-filtering_scRNA.nb.html)  | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
@@ -38,7 +38,7 @@ While we expect to start and end each day on time, the timing of individual modu
 |             | [Exercise: scRNA-seq clustering](https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/exercise_02-scrna_clustering.Rmd)
 |             | [Consultation session](workshop-structure.md#consultation-sessions) | [Slack channel](../virtual-setup/slack-procedures.md#general-use) |
 | 5:00  PM    | End             |         
-| **Day 4**   | **2021-07-01**  <br> [_**Introduction to Pathway Analysis**_](https://github.com/AlexsLemonade/training-modules/blob/master/scRNA-seq/README.md) | | 
+| **Day 4**   | **2021-07-01**  <br> [_**Introduction to Pathway Analysis**_](https://github.com/AlexsLemonade/training-modules/blob/master/scRNA-seq#readme) | | 
 | 12:00 PM    | Introduction to Pathway Analysis <br> [Pathway analysis slides (pdf)](../slides/2021-07-01_Pathway_Analysis.pdf)  |  Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
 | 12:30 PM    | [Pathway analysis: Over-representation analysis](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/06-overrepresentation_analysis.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) |
 | 2:00 PM     | [Pathway analysis: Gene Set Enrichment Analysis](https://htmlpreview.github.io/?https://github.com/AlexsLemonade/training-modules/blob/{{site.release_tag}}/scRNA-seq/07-gene_set_enrichment_analysis.nb.html) | Zoom: [Main Session](../virtual-setup/zoom-procedures.md#joining-a-zoom-call) | 
