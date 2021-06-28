@@ -20,7 +20,7 @@ In this training workshop, we will be using the following modules:
 <!--List the specific modules you will be using and use permalinks to a specific release-->
 
 - [Intro to R and the Tidyverse](https://github.com/AlexsLemonade/training-modules/tree/{{site.release_tag}}/intro-to-R-tidyverse)
-- [scRNA-seq](https://github.com/AlexsLemonade/training-modules/tree/{{site.release_tag}}/scRNA-seq), which includes pathway analysis material
+- [scRNA-seq](https://github.com/AlexsLemonade/training-modules/tree/master/scRNA-seq), which includes pathway analysis material
 
 
 The layout of the `training-modules` folders follow a common general structure.
