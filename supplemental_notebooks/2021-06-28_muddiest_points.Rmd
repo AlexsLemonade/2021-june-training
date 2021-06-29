@@ -18,7 +18,7 @@ This notebook addresses some questions that came up after the first day of the C
 
 ### How to use this notebook: 
 
-While it is fine to just read this page as is, if you want to get the Rmarkdown notebooks itself to work with, you can follow the following steps:
+While it is fine to just read this page as is, if you want to get the Rmarkdown notebook itself to work with, you can follow the following steps:
 
 1. Click the `Code` button in the upper right of this page and choose `Download Rmd` to save this notebook (`2021-06-28_muddiest_points.Rmd`) to your computer.
 If you have RStudio installed on your computer, you can then open the file directly.
