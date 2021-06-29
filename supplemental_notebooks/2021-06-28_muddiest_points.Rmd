@@ -23,7 +23,7 @@ While it is fine to just read this page as is, if you want to get the Rmarkdown 
 1. Click the `Code` button in the upper right of this page and choose `Download Rmd` to save this notebook (`2021-06-28_muddiest_points.Rmd`) to your computer.
 If you have RStudio installed on your computer, you can then open the file directly.
 
-Otherwise you can add it to the CCDL RStudio server to work with it there with the following addtional steps:
+Otherwise you can add it to the CCDL RStudio server to work with it there with the following additional steps:
 
 2. Navigate to RStudio server.  
 3. In the `File` pane, navigate to `training-modules/intro-to-R-tidyverse`.     
@@ -85,11 +85,11 @@ BiocManager::install("DropletUtils")
 ## When do I need quotes for column names?
 
 In the demonstration notebooks, we showed two ways to select multiple columns from a data frame. 
-Some metods  required us to put quotes around the column names, and some didn't.
+Some methods  required us to put quotes around the column names, and some didn't.
 This is quite understandably confusing!
 
 Unfortunately, the full answer is a bit technical, but the basic answer is this: 
-If you are using functions from the `tidyverse`, you _usually_ don't neeed to use quotes for columns names, and can treat them just like variable names.
+If you are using functions from the `tidyverse`, you _usually_ don't need to use quotes for columns names, and can treat them just like variable names.
 The tidyverse functions will assume that something that looks like a variable name may be a column, so it will look in the data frame for that column (or create a column with that name, if that is the task at hand). 
 
 Base R functions don't do this, so you usually have to put the column names in quotes so that R knows they are character (text) strings.
@@ -100,7 +100,7 @@ Let's look at some examples with the `palmerpengins` data.
 In this notebook, I am not going to load any packages except `magrittr` for the `%>%` pipe, so you will see lots of use of the `::` operator.
 I am doing this to make it always clear when I am using package functions, but in many cases you might have loaded `dplyr` and can leave the first part off.
 
-First we will load `magrittr` package and the palmer penguins data frame into a variable called `penguins`, as we did before.
+First we will load `magrittr` package and the Palmer penguins data frame into a variable called `penguins`, as we did before.
 
 ```{r}
 library(magrittr)
@@ -124,7 +124,7 @@ bill_lengths <- penguins$bill_length_mm
 str(bill_lengths)
 ```
 
-Alternative, we could use a `tidyverse` function from the `dplyr` package called `pull()` to accomplish the same task.
+Alternatively, we could use a `tidyverse` function from the `dplyr` package called `pull()` to accomplish the same task.
 This function is particularly useful when we need to extract a column in a series of piped (`%>%`) steps, where the `$` would be hard to use.
 Because it is a tidyverse function, no quotes are needed!
 
@@ -154,14 +154,15 @@ penguins %>%
 ### Filtering
 
 We didn't cover it in the lecture, but it is possible to do filtering by rows in base R too.
-First let's look at a tidyverse example:
+First let's look at a tidyverse example.
+Here we are filtering the table to only rows (penguins) with a bill length less than 35 mm in length.
 
 ```{r}
 penguins %>%
   dplyr::filter(bill_length_mm < 35)
 ```
 
-To do this in base R, we construct the same kind of test statement, but here we need to explictly say that we are using a column from the `penguins` data frame in the test.
+To do this in base R, we construct the same kind of test statement, but here we need to explicitly say that we are using a column from the `penguins` data frame in the test.
 Then we can use it in brackets, this time in the first position before the comma to select rows.
 
 ```{r}
