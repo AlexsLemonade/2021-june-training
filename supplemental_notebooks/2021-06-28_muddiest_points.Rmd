@@ -1,0 +1,192 @@
+---
+title: "Day 1: Intro to R & tidyverse Supplementary Notebook"
+author: Josh Shapiro
+date: 2021-06-29
+output:   
+  html_notebook: 
+    toc: true
+    toc_float: true
+---
+
+
+## Introduction
+
+This notebook addresses some questions that came up after the first day of the CCDL workshop.
+
+- [Installing packages](#installing-packages)
+- [Data frame column names: when are quotes needed?](#when-do-i-need-quotes-for-column-names)
+
+### How to use this notebook: 
+
+While it is fine to just read this page as is, if you want to get the Rmarkdown notebooks itself to work with, you can follow the following steps:
+
+1. Click the `Code` button in the upper right of this page and choose `Download Rmd` to save this notebook (`2021-06-28_muddiest_points.Rmd`) to your computer.
+If you have RStudio installed on your computer, you can then open the file directly.
+
+Otherwise you can add it to the CCDL RStudio server to work with it there with the following addtional steps:
+
+2. Navigate to RStudio server.  
+3. In the `File` pane, navigate to `training-modules/intro-to-R-tidyverse`.     
+4. Click the `Upload` button in the `File` pane.   
+5. Click `Choose file` and find this `Rmd` file on your computer, then click `OK`  
+
+
+Now you can open up this file and run it on the Server. 
+
+## Installing packages
+
+We do not explicitly cover package installation during this training, mostly for time reasons, but also because we want to make sure everything is there and ready to go!
+
+But of course when you go to work on your own machine, some R packages may not be installed, so you may need to know how to install them!
+Usually, this is pretty straightforward, and we will cover the most common situations here.
+
+There are two main sources for R packages that we use, [CRAN](https://cran.r-project.org/) and [Bioconductor](https://bioconductor.org/).
+Installation of packages from the two sources is slightly different.
+
+### CRAN packages
+
+Most general use packages (not biology-specific) are available through CRAN, the Comprehensive R Archive Network.
+To install a package from CRAN, you use the `install.packages()` function, which will install the requested package(s) as well as any packages they might depend on.
+So if I wanted to install (or update) the `tidyverse` package and all of its dependencies, I would use the following command:
+
+```{r, eval = FALSE}
+install.packages("tidyverse")
+```
+
+If I had more than one package to install, I would use a vector of the package names (each enclosed by quotes):
+```{r eval = FALSE}
+install.packages(c("magrittr", "dplyr", "palmerpenguins"))
+```
+
+The first time you use `install.packages()` you may be prompted (in the Console) to choose a "mirror". 
+You will need to enter any responses in the console.
+Using option `0`, the "cloud", is usually safe, but you can choose another location if you prefer.
+
+If you are using RStudio, there is also an "Install" button in the `Packages` tab, which will prompt you to enter the packages you want to install, but this will only work with CRAN packages.
+
+### Bioconductor packages
+
+To install Bioconductor packages, you need to use a specialized installation function from the `BiocManager` package.
+So the first step is to install that package from CRAN:
+
+```{r eval = FALSE}
+install.packages("BiocManager")
+```
+
+Once that is installed, you can use `BiocManager::install()` to install any packages that are part of Bioconductor and their dependencies. 
+(In fact you could use this always: it will find CRAN packages as well!)
+
+```{r, eval = FALSE}
+BiocManager::install("DropletUtils")
+```
+
+`BiocManager::install()` tends to be a bit more chatty than the base R installation; be on the lookout for prompts that you need to respond to in the console.
+
+## When do I need quotes for column names?
+
+In the demonstration notebooks, we showed two ways to select multiple columns from a data frame. 
+Some metods  required us to put quotes around the column names, and some didn't.
+This is quite understandably confusing!
+
+Unfortunately, the full answer is a bit technical, but the basic answer is this: 
+If you are using functions from the `tidyverse`, you _usually_ don't neeed to use quotes for columns names, and can treat them just like variable names.
+The tidyverse functions will assume that something that looks like a variable name may be a column, so it will look in the data frame for that column (or create a column with that name, if that is the task at hand). 
+
+Base R functions don't do this, so you usually have to put the column names in quotes so that R knows they are character (text) strings.
+The main exception is when you are using the `$` notation, which is explicitly telling R to use a column name. 
+
+Let's look at some examples with the `palmerpengins` data.
+
+In this notebook, I am not going to load any packages except `magrittr` for the `%>%` pipe, so you will see lots of use of the `::` operator.
+I am doing this to make it always clear when I am using package functions, but in many cases you might have loaded `dplyr` and can leave the first part off.
+
+First we will load `magrittr` package and the palmer penguins data frame into a variable called `penguins`, as we did before.
+
+```{r}
+library(magrittr)
+penguins <- palmerpenguins::penguins
+```
+
+Now we can look at what the column names are:
+```{r}
+colnames(penguins)
+```
+
+As you can see, R reports these as character strings, enclosed in quotes.
+
+### Selecting columns
+If we want to select an individual column as a **vector**, we can use the `$`:
+
+```{r}
+bill_lengths <- penguins$bill_length_mm
+
+# look at the structure of the vector we extracted (so we don't print it all)
+str(bill_lengths)
+```
+
+Alternative, we could use a `tidyverse` function from the `dplyr` package called `pull()` to accomplish the same task.
+This function is particularly useful when we need to extract a column in a series of piped (`%>%`) steps, where the `$` would be hard to use.
+Because it is a tidyverse function, no quotes are needed!
+
+```{r}
+bill_depths <- penguins %>%
+  dplyr::pull(bill_depth_mm)
+
+str(bill_depths)
+```
+
+If we want to extract multiple columns into a new data frame, we can do that with the bracket `[]` notation in base R.
+For this we need to have the column names in quotes, and as part of a vector.
+Remember that columns are the second axis, so we will have a blank space before the comma to indicate we want all rows.
+
+```{r}
+penguin_sites <- penguins[, c("species", "island", "year")]
+head(penguin_sites)
+```
+The alternative with `tidyverse` uses `dplyr::select()` and no quotes (no vector either!).
+In this case I am not saving the results to a new variable, just printing the same part as above.
+
+```{r}
+penguins %>% 
+  dplyr::select(species, island, year) %>%
+  head()
+```
+### Filtering
+
+We didn't cover it in the lecture, but it is possible to do filtering by rows in base R too.
+First let's look at a tidyverse example:
+
+```{r}
+penguins %>%
+  dplyr::filter(bill_length_mm < 35)
+```
+
+To do this in base R, we construct the same kind of test statement, but here we need to explictly say that we are using a column from the `penguins` data frame in the test.
+Then we can use it in brackets, this time in the first position before the comma to select rows.
+
+```{r}
+penguins[penguins$bill_length_mm < 35, ]
+```
+If we left off the `penguins$` we would get an error (and quotes won't help us):
+
+```{r, error=TRUE}
+penguins[bill_length_mm < 35, ]
+```
+
+### Summary
+
+While there _are_ rules about when quotes are needed for column, it can be hard to spell all of them out. 
+The "tidyverse doesn't need quotes" is a good rule of thumb, but there are exceptions, and the best way to learn where those are is to try things out, run into errors, and learn how to fix them! 
+
+As always, the [`dplyr` reference material](https://dplyr.tidyverse.org/) can be very helpful, and we encourage you to explore!
+
+
+## Session Info
+```{r}
+sessionInfo()
+```
+
+
+
+
+
