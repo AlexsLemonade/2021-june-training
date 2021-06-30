@@ -1,0 +1,178 @@
+---
+title: "Day 2: scRNA-seq Quantification Supplementary Notebook"
+author: Ally Hawkins
+date: 2021-06-30
+output:   
+  html_notebook: 
+    toc: true
+    toc_float: true
+---
+
+## Introduction
+
+This notebook addresses some questions that came up after the second day of class covering scRNA-seq quantification. 
+
+- [Demystifying Normalization](#demystifying-normalization)
+- [Data Integration](#data-integration)
+
+### How to use this notebook: 
+
+While it is fine to just read this page as is, if you want to get the Rmarkdown notebook itself to work with, you can follow the following steps:
+
+1. Click the `Code` button in the upper right of this page and choose `Download Rmd` to save this notebook (`2021-06-29_muddiest_points.Rmd`) to your computer.
+If you have RStudio installed on your computer, you can then open the file directly.
+
+Otherwise you can add it to the CCDL RStudio server to work with it there with the following additional steps:
+
+2. Navigate to RStudio server.  
+3. In the `File` pane, navigate to `training-modules/scRNA-seq`.     
+4. Click the `Upload` button in the `File` pane.   
+5. Click `Choose file` and find this `Rmd` file on your computer, then click `OK`  
+
+
+Now you can open up this file and run it on the Server. 
+
+## Demystifying Normalization 
+
+A few questions came up on how to normalize data and more insight into the normalization process. 
+
+As a reminder from yesterday, the main goal of normalization is to minimize technical variation and maximize biological variation. 
+In single-cell sequencing, each count present in the counts matrix is going to represent successful capture and sequencing of that mRNA transcript. 
+When you total the counts for each cell that will represent the total number of RNA molecules that were captured and sequenced successfully in that cell. 
+
+However, the total RNA count is not going to be equal in every single cell. 
+This variation could be due to a variety of technical factors, most likely differences in sequencing depths across the cells. 
+While one cell may have 50,000 reads another cell may have 20,000 reads and if we didn't perform normalization those cells would appear different from each other solely based on the fact that one cell has less total reads than the other cell. 
+
+This is where normalization comes in, we can use normalization to account for the variation in sequencing depth and minimize the technical variation. 
+
+One way to do this is to make the assumption that every single cell has the same total number of RNA molecules to be sampled from and that the only differences in count depth will be from sampling.
+If this were the case, we can calculate what's called a size factor that is proportional to the count depth per cell and multiply each count by that size factor. 
+
+However, in a single-cell dataset the assumption that every cell has the same number of RNA molecules to begin with doesn't necessarily hold true. 
+It is likely that cells can have variations in their total RNA content based on cell type or cell state. 
+Furthermore, single-cell data contains many dropout events making it hard to estimate size factors on a single cell level. 
+
+To account for this heterogeneity in single-cell, we first pool our cells based on how similar they are to each other using their gene expression profiles. 
+This pooling method helps account for dropout commonly observed in single-cell RNA seq. 
+This is done using the `scran::quickCluster()` function where each cell is assigned to a cluster. 
+
+The size factors are then estimated for each cell based on combined gene expression of cells in each cluster using a linear regression model.
+This is done using `scran::computeSumFactors()`. 
+
+Finally, the pooled size factors that are computed for each cell are used to transform each count for that cell to its normalized count prior to log transformation of the entire dataset. 
+
+Let's walk through the example we did in class but a little slower this time to show you each of the steps.
+
+
+```{r}
+# import libraries and set seed
+set.seed(1234)
+
+# Magrittr for the pipe %>%
+library(magrittr)
+
+# Packages for single cell processing
+library(scater)
+library(scran)
+
+```
+
+```{r}
+## set up file paths 
+# main data directory
+data_dir <- file.path("data", "tabula-muris")
+
+# Filtered count matrix file 
+filtered_sce_file <- file.path(data_dir, "filtered", "filtered_sce.rds")
+```
+
+```{r}
+# read in filtered bladder_sce object
+bladder_sce <- readr::read_rds(filtered_sce_file)
+```
+
+First, we will want to use `scran::quickCluster()` to cluster are cells and assign each cell a number as to which cluster it belongs to. 
+
+```{r}
+# Step 1) Group cells with other like cells by clustering.  
+qclust <- scran::quickCluster(bladder_sce)
+```
+
+Now, we will use those cluster assignments to compute the size factors for each cell.
+
+```{r}
+# Step 2) Compute sum factors for each cell cluster grouping.  
+bladder_sce <- scran::computeSumFactors(bladder_sce, clusters = qclust)
+```
+
+Now that we have computed the size factors for each cluster of cells, let's take a look at what that did to our single cell experiment object? 
+
+```{r}
+bladder_sce
+```
+
+You should now see that there is an additional column in the `colData` slot with the label `sizeFactor`. 
+Let's take a look at what these are. 
+
+```{r}
+head(colData(bladder_sce))
+```
+
+You should see a different sizeFactor for each cell that has now been computed and added into our `SingleCellExperiment` object.
+
+The final step is to multiply each of those sizeFactors by every count for that cell and then log transform our entire counts matrix. 
+
+Remember, the log transformation will also add a pseudocount of 1 to every entry in the matrix which helps remove the 0 counts, since we cannot take the log of 0. 
+The log transformation is important as we want to remove any skewness present in our data and many of the downstream tools we are going to use will use the assumption that our dataset has a normal distribution. 
+
+```{r}
+# Step 3) Normalize using these pooled sum factors and log transform. 
+bladder_sce <- scater::logNormCounts(bladder_sce)
+```
+
+Now if we look at our `SingleCellExperiment` object we should have a brand new assay called `logcounts`. 
+
+```{r}
+bladder_sce
+```
+
+Let's take a look now at the distribution of our counts before and after normalization. 
+
+```{r}
+# take the colSums of each counts and logcounts matrix to get a vector of total counts per cell
+total_counts_raw <- colSums(counts(bladder_sce))
+total_counts_norm <- colSums(logcounts(bladder_sce))
+```
+
+
+```{r}
+# make a data frame with raw and normalized counts each as their own column
+total_counts <- data.frame(raw = total_counts_raw,
+                           norm = total_counts_norm)
+
+# stack the two columns on top of each other to make a new data frame with two columns "Type" and "Counts"
+total_counts <- total_counts %>%
+  tidyr::pivot_longer(cols = c("raw", "norm"),
+                      names_to = "Type",
+                      values_to = "Counts")
+
+# plot the distribution of normalized counts vs raw counts
+ggplot(total_counts, aes(x = Counts, fill = Type)) + 
+  geom_density()
+```
+
+As you can see from the overlaid density plots that by applying normalization we have now decreased the variation seen in total counts across the cells.  
+In class we also showed that there is larger separation between cells of different celltypes using PCA.
+This has completed the desired effect of decreasing technical variation and increasing biological variation. 
+
+More information on normalization and other methods other than using `scran` can be found [here.](https://scrnaseq-course.cog.sanger.ac.uk/website/cleaning-the-expression-matrix.html#normalization-theory)
+
+## Data Integration 
+
+There are many different approaches and methods to data integration and merging multiple samples and although this particular topic is outside the scope of this course, we encourage you to take a look at some additional resources that provide information in more detail: 
+
+- [Comprehensive integration of single-cell data, Stuart *et al*, 2019](https://www.cell.com/cell/fulltext/S0092-8674(19)30559-8?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867419305598%3Fshowall%3Dtrue)
+- [Correcting batch effects in single-cell RNA seq data](http://bioconductor.org/packages/devel/bioc/vignettes/batchelor/inst/doc/correction.html)
+- [Integrated analysis of multimodal single-cell data, Hao *et al*, 2021](https://www.cell.com/cell/fulltext/S0092-8674(21)00583-3?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867421005833%3Fshowall%3Dtrue)
+
