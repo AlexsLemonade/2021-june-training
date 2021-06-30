@@ -141,7 +141,8 @@ Let's take a look now at the distribution of our counts before and after normali
 
 ```{r}
 # take the colSums of each counts and logcounts matrix to get a vector of total counts per cell
-total_counts_raw <- colSums(counts(bladder_sce))
+# remember we want our raw matrix to be on the same scale so we will also log transform that matrix
+total_counts_raw <- colSums(log1p(counts(bladder_sce)))
 total_counts_norm <- colSums(logcounts(bladder_sce))
 ```
 
