@@ -39,15 +39,16 @@ To answer these questions we are going to dive a little deeper into normalizatio
 
 ### Why do we need to normalize our data? 
 
-Inherently, single-cell RNA sequencing comes with technical confounders that if not accounted for can impact the interpreation of downstream analysis. 
+Single-cell RNA sequencing inherently comes with technical confounders that, if not accounted for, can impact the interpretation of downstream analysis. 
 Technical variables include differences in sequencing depth and cell size across cells in a single-cell library ([Stegle _et al._ 2015](https://www.nature.com/articles/nrg3833).)
 
-If we were to proceed with downstream analysis, such as differential gene expression and cell clustering, these technical problems would impact the overall conclusions.
+If we were to proceed with downstream analysis such as differential gene expression and cell clustering without accounting for such effects, these technical problems could impact the overall conclusions.
 
 For example, let's consider two cells with different sequencing depths. 
-Cell A has a total of 20,000 counts and 10,000 of those counts come from gene X and cell B has only 10,000 counts but 5,000 counts come from gene X. 
+Cell A has a total of 20,000 counts and 10,000 of those counts come from gene X. 
+Cell B has only 10,000 counts but 5,000 counts come from gene X. 
 Prior to normalization, a raw comparison of the counts for gene X in cell A vs. cell B would show that gene X is downregulated in cell B. 
-However if we look at the ratio of counts corresponding to gene X/total counts both cells have 50 % of their reads corresponding to this gene and you would presume that it is not downregulated. 
+However if we look at the ratio of counts corresponding to gene X/total counts both cells have 50% of their reads corresponding to this gene and you would presume that it is not downregulated. 
 But how would we know if it truly is downregulated or if it is because of a difference with sequencing depth? 
 
 By performing normalization we can account for the technical variation between cells in our data and maximize biological variation, allowing us to make more accurate conclusions from downstream analysis.
@@ -56,20 +57,20 @@ Let's walk through some options for performing normalization of our counts matri
 
 ### Library scaling for Normalization 
 
-The most commonly used approaches for normalization of single-cell RNA seq data are based on library scaling, where each count is scaled by a cell-specific scaling factor ([Anders and Huber 2010](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-10-r106)).
+One commonly used approach for normalization of single-cell RNA seq data is based on library scaling, where each count is scaled by a cell-specific scaling factor ([Anders and Huber 2010](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-10-r106)).
 
-The most basic library scaling methods use the assumption that the only difference between each cell is the total number of RNA molecules and that any other technical factors like changes in PCR amplification or mRNA capture efficiency affect each cell equally.
+The most basic library scaling methods assume that the only important technical effect among cells is the total number of RNA molecules sequenced; any other technical factors like changes in PCR amplification or mRNA capture efficiency affect each cell equally.
 Another assumption made is that there are similar degrees of differential gene expression between any two pairs of cells across the entire dataset ([Robinson and Oshlack 2010](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-3-r25)). 
 
 For this method, the cell-specific scaling factor, or size factor, is calculated as follows: 
 
-1. Calculate the geometric mean of each gene across all cells. 
+1. Calculate the geometric mean of the expression counts for each gene across all cells. 
 2. Compute the ratio of the expression of each gene to the geometric mean across all cells. 
 3. The size factor is equal to the median of the gene/geometric mean ratio across all genes for that cell. 
 
 The drawback of this method is that only genes with non-zero expression values can be used to calculate the geometric mean. 
-With the high dropout and low counts found in single-cell RNA seq datasets and reliance on balance of differential gene expression, this method does not account for the hetereogeneity commonly present in single-cell RNA seq data. 
-Therefore, it should be used with caution as it can impact interpreation of downstream analysis. 
+With the high dropout and low counts found in single-cell RNA seq datasets and reliance on balance of differential gene expression, this method does not account for the heterogeneity commonly present in single-cell RNA seq data. 
+Therefore, it should be used with caution as it can impact interpretation of downstream analysis. 
 
 ### Scran/Deconvolution for Normalization
 
@@ -85,17 +86,17 @@ Once cells are assigned to a cluster, size factors are computed for each pool fi
 The rationale behind pooling cells first is two-fold - 1) to increase the total number of counts and overcome dropout for more accurate size factor estimation and 2) to remove the assumption of balanced differential expression. 
 Rather, we now assume that differential expression between clusters is balanced. 
 
-Using this method helps account for any bias due to presence of differing cell types or cell states within a single-cell RNA seq dataset that could impact gene expression. 
+Using this method helps account for bias due to the presence of differing cell types or cell states within a single-cell RNA seq dataset that could impact the normalization and our downstream gene expression estimates. 
 
 ### Log Transformation
 
-Finally, the normalized counts are computed by dividing the raw counts for each gene by the respective size factor for that cell.
+Normalized counts are computed by dividing the raw counts for each gene by the respective size factor for that cell.
 The normalized counts matrix is then transformed using a log transformation. 
 
 There are a few reasons we typically perform log transformation of our matrix: 
 
 - Log transformation mitigates the relationship between high gene expression and high variance  
-- Reduces general skewness of the data to fit the assumptions of downstream tools 
+- Reduces general skewness of the data (makes the distributions "more normal") to fit the assumptions of downstream tools 
 
 Prior to log transformation, a pseudocount will also be added to our normalized matrix to avoid undefined values of log(0). 
 The typical pseudocount used is 1, as a pseudocount of 1 preserves sparsity from the original matrix. 
@@ -134,7 +135,7 @@ normalized_sce_file <- file.path(data_dir, "normalized", "normalized_hodgkins_sc
 hodgkins_sce <- readr::read_rds(hodgkins_sce_file)
 ```
 
-We will go ahead and use the `scater::librarySizeFactors` function to compute the size factors for our counts matrix.
+We will use the `scater::librarySizeFactors` function to compute the size factors for each cell using the original `counts` matrix, which is still stored in the `SingleCellExperiment` object.
 Then we can use the same `scater::logNormCounts` that we used in class to apply the size factors to the counts matrix, but here we will have to specify the vector containing the size factors we would like to use since they are not in the `colData` yet. 
 
 ```{r}
@@ -146,7 +147,7 @@ library_sf_sce <- scater::logNormCounts(hodgkins_sce, size.factors = library_sf)
 ```
 
 Let's take a look now and compare these two different types of analysis using our PCA analysis. 
-Rather than use `calculatePCA()` though we can use `runPCA()` and add the information directly to our two `SingleCellExperiments`. 
+We will use `runPCA()` and add the results directly to our two `SingleCellExperiments`. 
 
 ```{r}
 # calculate PCA for both normalized SingleCellExperiment objects
@@ -168,7 +169,7 @@ scater::plotReducedDim(pool_sce, dimred = "PCA",
   ggtitle("Pooled Size Scaling/ Deconvolution")
 ```
 
-As you can see the normalized matrix with library scaling in comparison to the second plot where we have performed clustering prior to calculating size factors results in a different PCA plot. 
+As you can see, the library scaling and pooled scaling result in a quite different PCA plots with different clustering patterns, and it is reasonable to assume that these difference will also affect other downstream analyses. 
 This is just one example to show that the normalization method can impact the results of downstream analysis like PCA, UMAP, cell clustering, and differential expression! 
 
 If you still have lingering questions about normalization or want to know about even more methods you can use, we've provided some more resources on Normalization methods: 
@@ -189,4 +190,3 @@ There are many different approaches and methods to data integration and merging 
 - [Comprehensive integration of single-cell data, Stuart *et al*, 2019](https://www.cell.com/cell/fulltext/S0092-8674(19)30559-8?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867419305598%3Fshowall%3Dtrue)
 - [Correcting batch effects in single-cell RNA seq data](http://bioconductor.org/packages/devel/bioc/vignettes/batchelor/inst/doc/correction.html)
 - [Integrated analysis of multimodal single-cell data, Hao *et al*, 2021](https://www.cell.com/cell/fulltext/S0092-8674(21)00583-3?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867421005833%3Fshowall%3Dtrue)
-
