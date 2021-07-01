@@ -171,7 +171,7 @@ scater::plotReducedDim(pool_sce, dimred = "PCA",
   ggtitle("Pooled Size Scaling/ Deconvolution")
 ```
 
-As you can see, the library scaling and pooled scaling result in a quite different PCA plots with different clustering patterns, and it is reasonable to assume that these difference will also affect other downstream analyses. 
+As you can see, the library scaling and pooled scaling result in a quite different PCA plots with different clustering patterns, and it is reasonable to assume that these differences will also affect other downstream analyses. 
 This is just one example to show that the normalization method can impact the results of downstream analysis like PCA, UMAP, cell clustering, and differential expression! 
 
 If you still have lingering questions about normalization or want to know about even more methods you can use, we've provided some more resources on Normalization methods: 
