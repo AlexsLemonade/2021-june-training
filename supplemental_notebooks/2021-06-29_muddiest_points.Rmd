@@ -1,0 +1,194 @@
+---
+title: "Day 2: scRNA-seq Quantification Supplementary Notebook"
+author: Ally Hawkins
+date: 2021-06-30
+output:   
+  html_notebook: 
+    toc: true
+    toc_float: true
+---
+
+## Introduction
+
+This notebook addresses some questions that came up after the second day of class covering scRNA-seq quantification. 
+
+- [Demystifying Normalization](#demystifying-normalization)
+- [Data Integration](#data-integration)
+
+### How to use this notebook: 
+
+While it is fine to just read this page as is, if you want to get the Rmarkdown notebook itself to work with, you can follow the following steps:
+
+1. Click the `Code` button in the upper right of this page and choose `Download Rmd` to save this notebook (`2021-06-29_muddiest_points.Rmd`) to your computer.
+If you have RStudio installed on your computer, you can then open the file directly.
+
+Otherwise you can add it to the CCDL RStudio server to work with it there with the following additional steps:
+
+2. Navigate to RStudio server.  
+3. In the `File` pane, navigate to `training-modules/scRNA-seq`.     
+4. Click the `Upload` button in the `File` pane.   
+5. Click `Choose file` and find this `Rmd` file on your computer, then click `OK`  
+
+
+Now you can open up this file and run it on the Server. 
+
+## Demystifying Normalization 
+
+A few questions came up on how to normalize data and more insight into the normalization process. 
+To answer these questions we are going to dive a little deeper into normalization and some different types of normalization. 
+
+### Why do we need to normalize our data? 
+
+Single-cell RNA sequencing inherently comes with technical confounders that, if not accounted for, can impact the interpretation of downstream analysis. 
+Technical variables include differences in sequencing depth and cell size across cells in a single-cell library ([Stegle _et al._ 2015](https://www.nature.com/articles/nrg3833).)
+
+If we were to proceed with downstream analysis such as differential gene expression and cell clustering without accounting for such effects, these technical problems could impact the overall conclusions.
+
+For example, let's consider two cells with different sequencing depths. 
+Cell A has a total of 20,000 counts and 10,000 of those counts come from gene X. 
+Cell B has only 10,000 counts but 5,000 counts come from gene X. 
+Prior to normalization, a raw comparison of the counts for gene X in cell A vs. cell B would show that gene X is downregulated in cell B. 
+However if we look at the ratio of counts corresponding to gene X/total counts, both cells have 50% of their reads corresponding to this gene and you would presume that it is not downregulated. 
+But how would we know if it truly is downregulated or if it is because of a difference with sequencing depth? 
+
+By performing normalization we can account for the technical variation between cells in our data and maximize biological variation, allowing us to make more accurate conclusions from downstream analysis.
+
+Let's walk through some options for performing normalization of our counts matrix.
+
+### Library scaling for Normalization 
+
+One commonly used approach for normalization of single-cell RNA seq data is based on library scaling, where each count is scaled by a cell-specific scaling factor ([Anders and Huber 2010](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-10-r106)).
+
+The most basic library scaling methods assume that the only important technical effect among cells is the total number of RNA molecules sequenced; any other technical factors like changes in PCR amplification or mRNA capture efficiency affect each cell equally.
+Another assumption made is that the composition of the library is homogeneous ([Robinson and Oshlack 2010](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-3-r25)). 
+
+For this method, the cell-specific scaling factor, or size factor, is calculated as follows: 
+
+1. Calculate the geometric mean of the expression counts for each gene across all cells. 
+2. Compute the ratio of the expression of each gene to the geometric mean across all cells. 
+3. The size factor is equal to the median of the gene/geometric mean ratio across all genes for that cell. 
+
+The drawback of this method is that only genes with non-zero expression values can be used to calculate the geometric mean. 
+Single-cell RNA-seq datasets commonly have high dropout rates and do not fit the assumption of homogeneous cell populations. 
+Therefore, library scaling should be used with caution with scRNA-seq as it can impact interpretation of downstream analysis. 
+
+### Scran/Deconvolution for Normalization
+
+There are two reasons that using the library scaling method alone may not be the best approach for single-cell RNA seq datasets: 
+
+1. Single-cell RNA seq datasets tend to have high dropout and low counts 
+2. The expected variations in composition of cell types and cell states break the assumption of a homogenous library. 
+
+Another common approach that we discussed in class is to use the `scran` and `scater` packages to estimate size factors based on a pool or cluster of cells ([Lun _et al._ 2016](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0947-7)).
+Here, before calculating size factors, cells are first pooled into clusters based on similar patterns of gene expression using an approximation of PCA. 
+Once cells are assigned to a cluster, size factors are computed for each pool first and then "deconvolved" across each cell in the pool. 
+
+The rationale behind pooling cells first is two-fold - 1) to increase the total number of counts and overcome dropout for more accurate size factor estimation and 2) to remove the assumption that the entire library is homogeneous. 
+Rather, we now assume that each cluster is homogeneous. 
+
+Using this method helps account for bias due to the presence of differing cell types or cell states within a single-cell RNA seq dataset that could impact the normalization and our downstream gene expression estimates. 
+
+### Log Transformation
+
+Normalized counts are computed by dividing the raw counts for each gene by the respective size factor for that cell.
+The normalized counts matrix is then transformed using a log transformation. 
+
+There are a few reasons we typically perform log transformation of our matrix: 
+
+- Log transformation mitigates the relationship between high gene expression and high variance  
+- Reduces general skewness of the data (makes the distributions "more normal") to fit the assumptions of downstream tools 
+
+Prior to log transformation, a pseudocount will also be added to our normalized matrix to avoid undefined values of log(0). 
+The typical pseudocount used is 1, as a pseudocount of 1 preserves sparsity from the original matrix. 
+
+### Comparison of Normalization Methods
+
+Let's go ahead and take a closer look at both of these methods and compare how using the library scaling method versus the pooled scaling method/ deconvolution method affects our dataset. 
+
+Rather than use the original bladder dataset from the Tabula Muris project that we looked at when we first learned normalization, let's take a closer look at the dataset from the Hodgkin's lymphoma data that we filtered and normalized in the `04-dimension_reduction_scRNA.Rmd` notebook.
+
+In that notebook, we previously performed normalization using pooled scaling with `scran()` and `scater()`, but let's see what would have happened if we hadn't used pooled scaling instead and how that might have affected our downstream analysis. 
+
+```{r setup}
+# for these methods we are using clustering so will need to set our seed first
+set.seed(12345)
+
+# import packages 
+# Magrittr for the pipe %>%
+library(magrittr)
+
+# Packages for single cell processing
+library(scater)
+library(scran)
+```
+
+```{r}
+## set up file paths 
+# main data directory
+data_dir <- file.path("data", "hodgkins")
+
+# Normalized count matrix file 
+normalized_sce_file <- file.path(data_dir, "normalized", "normalized_hodgkins_sce.rds")
+```
+
+```{r}
+# read in normalized hodgkins sce object
+hodgkins_sce <- readr::read_rds(hodgkins_sce_file)
+```
+
+We will use the `scater::librarySizeFactors` function to compute the size factors for each cell using the original `counts` matrix, which is still stored in the `SingleCellExperiment` object.
+Then we can use the same `scater::logNormCounts` that we used in class to apply the size factors to the counts matrix, but here we will have to specify the vector containing the size factors we would like to use since they are not in the `colData` yet. 
+
+```{r}
+# calculate library size factors on counts matrix from hodgkins_sce
+library_sf <- scater::librarySizeFactors(counts(hodgkins_sce))
+
+# normalize and log transform counts using library size factors 
+library_sf_sce <- scater::logNormCounts(hodgkins_sce, size.factors = library_sf)
+```
+Since the original `SingleCellExperiment` already has the normalized counts using the pooled scaling method class, we don't need to compute that again now. 
+
+Let's take a look now and compare these two different types of analysis using our PCA analysis. 
+We will use `runPCA()` and add the results directly to our two `SingleCellExperiments`. 
+
+```{r}
+# calculate PCA for both normalized SingleCellExperiment objects
+library_sf_sce <- scater::runPCA(library_sf_sce)
+pool_sce <- scater::runPCA(hodgkins_sce)
+```
+
+
+```{r}
+# plot PCA of normalized counts using library size scaling
+scater::plotReducedDim(library_sf_sce, dimred = "PCA",
+                       colour = "detected") + 
+  ggtitle("Library Size Scaling")
+```
+```{r}
+# plot PCA of normalized counts using pooling of size factors 
+scater::plotReducedDim(pool_sce, dimred = "PCA",
+                       colour = "detected") +
+  ggtitle("Pooled Size Scaling/ Deconvolution")
+```
+
+As you can see, the library scaling and pooled scaling result in a quite different PCA plots with different clustering patterns, and it is reasonable to assume that these differences will also affect other downstream analyses. 
+This is just one example to show that the normalization method can impact the results of downstream analysis like PCA, UMAP, cell clustering, and differential expression! 
+
+If you still have lingering questions about normalization or want to know about even more methods you can use, we've provided some more resources on Normalization methods: 
+
+- [Orchestrating Single Cell Analysis Chapter on Normalization](https://bioconductor.org/books/release/OSCA/normalization.html)
+- [Hemberg lab scRNA-seq course section on Normalization methods](https://scrnaseq-course.cog.sanger.ac.uk/website/cleaning-the-expression-matrix.html#normalization-theory)
+- Review on Computational challenges in single-cell, including a summary on Normalization and technical variance in scRNA-seq([Stegle _et al._ 2015](https://www.nature.com/articles/nrg3833))]
+- Information on using spike-ins for Normalization with scRNA-seq ([T.L.Lun _et al._ 2017](https://genome.cshlp.org/content/27/11/1795.long))
+
+
+More information on normalization and other methods other than using `scran` can be found [here.](https://scrnaseq-course.cog.sanger.ac.uk/website/cleaning-the-expression-matrix.html#normalization-theory)
+
+## Data Integration 
+
+There are many different approaches and methods to data integration and merging multiple samples and although this particular topic is outside the scope of this course, we encourage you to take a look at some additional resources: 
+
+- [Orchestrating Single Cell Analysis on Data Integration](https://bioconductor.org/books/release/OSCA/integrating-datasets.html)
+- [Comprehensive integration of single-cell data, Stuart *et al*, 2019](https://www.cell.com/cell/fulltext/S0092-8674(19)30559-8?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867419305598%3Fshowall%3Dtrue)
+- [Correcting batch effects in single-cell RNA seq data](http://bioconductor.org/packages/devel/bioc/vignettes/batchelor/inst/doc/correction.html)
+- [Integrated analysis of multimodal single-cell data, Hao *et al*, 2021](https://www.cell.com/cell/fulltext/S0092-8674(21)00583-3?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867421005833%3Fshowall%3Dtrue)
