@@ -48,6 +48,7 @@ if (! "ggridges" %in% installed.packages()){
   install.package("ggridges")
 }
 ```
+
 ## Saving GSEA plots for all significant results
 
 ### Prep gene level statistics
@@ -230,6 +231,7 @@ gsea_random <- GSEA(geneList = lfc_vector,  # ordered ranked gene list
                      pAdjustMethod = "BH",  # correction for multiple hypothesis testing
                      TERM2GENE = random_gene_set_df)  # data frame with randomly generated gene sets
 ```
+
 Let's get the enrichment scores and normalized enrichment scores in a data frame we'll use for plotting.
 
 ```{r}
@@ -271,6 +273,7 @@ random_es %>%
   ggridges::geom_density_ridges() +
   ggplot2::theme_bw()
 ```
+
 
 ## Session Info
 
