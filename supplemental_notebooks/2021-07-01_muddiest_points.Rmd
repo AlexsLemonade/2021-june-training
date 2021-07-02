@@ -41,6 +41,13 @@ library(clusterProfiler)
 library(msigdbr)
 ```
 
+For some later plots, we are going to use the `ggridges` package, which may not be installed, so let's install it here (only if it is not already installed):
+
+```{r}
+if (! "ggridges" %in% installed.packages()){
+  install.package("ggridges")
+}
+```
 ## Saving GSEA plots for all significant results
 
 ### Prep gene level statistics
@@ -115,7 +122,7 @@ if (!dir.exists(plots_dir)) {
 }
 ```
 
-First, let's look at (one) way to save each of the significant pathways using `purrr`.
+Now, let's look at (one) way to save each of the significant pathways using `purrr`.
 
 ```{r}
 # Create a list of plots, where each element of the list will be 
@@ -128,14 +135,18 @@ plot_list <- purrr::map(
 )
 
 # Now we need to "walk" through both the plots and the gene set names
-plot_list %>%
-  purrr::walk2(as.list(significant_gene_sets),  # contains pathway names
-               ~ ggplot2::ggsave(plot = .x,   # plot itself (first list)
-                                 filename = file.path(plots_dir, 
-                                                      paste0(.y, # pathway name (second list)
-                                                             "_gsea_plot.png")),
-                                 width = 11, height = 7
-               ))
+purrr::walk2(
+  plot_list, # the list of plots
+  as.list(significant_gene_sets),  # the list of pathway names
+  ~ ggplot2::ggsave( # the function we are applying
+      plot = .x,   # plot itself (from the first list)
+      filename = file.path(plots_dir, 
+                           paste0(.y, # pathway name (from the second list)
+                                  "_gsea_plot.png")),
+      width = 11, 
+      height = 7
+    )
+)
 ```
 
 Here's how to do the same thing by looping through the vector of the significant pathway names with a `for` loop!
@@ -148,8 +159,8 @@ for (pathway in significant_gene_sets) {
                             title = pathway) # Pathway name
   # Save the plot, using the pathway name as part of the filename
   # Note that this will write over the files we saved with the purrr method!
-  ggplot2::ggsave(plot = p, filename = file.path(plots_dir,
-                                                 paste0(pathway, "_gsea_plot.png")),
+  ggplot2::ggsave(plot = p, 
+                  filename = file.path(plots_dir, paste0(pathway, "_gsea_plot.png")),
                   width = 11, height = 7)
 }
 ```
@@ -266,4 +277,3 @@ random_es %>%
 ```{r}
 sessionInfo()
 ```
-
