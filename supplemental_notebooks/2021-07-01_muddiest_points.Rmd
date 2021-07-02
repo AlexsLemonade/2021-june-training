@@ -1,0 +1,269 @@
+---
+title: "Day 4: Intro to pathway analysis supplemental notebook"
+author: Jaclyn Taroni
+date: 2021-07-01
+output:   
+  html_notebook: 
+    toc: true
+    toc_float: true
+---
+
+## Introduction
+
+This notebook addresses some questions that came up during or after the fourth day of the CCDL workshop.
+
+- [Saving GSEA plots for all significant pathways](#saving-gsea-plots-for-all-significant-results)
+- [GSEA significance](#a-little-more-on-GSEA-significance)
+
+### How to use this notebook: 
+
+While it is fine to just read this page as is, if you want to get the Rmarkdown notebook itself to work with, you can follow the following steps:
+
+1. Click the `Code` button in the upper right of this page and choose `Download Rmd` to save this notebook (`2021-07-01_muddiest_points.Rmd`) to your computer.
+If you have RStudio installed on your computer, you can then open the file directly.
+
+Otherwise you can add it to the CCDL RStudio server to work with it there with the following additional steps:
+
+2. Navigate to RStudio server.  
+3. In the `File` pane, navigate to `training-modules/scRNA-seq`.     
+4. Click the `Upload` button in the `File` pane.   
+5. Click `Choose file` and find this `Rmd` file on your computer, then click `OK`  
+
+Now you can open up this file and run it on the Server. 
+
+## Libraries
+
+```{r}
+library(magrittr)
+# Package to run GSEA
+library(clusterProfiler)
+# Package that contains the MSigDB gene sets in tidy format
+library(msigdbr)
+```
+
+## Saving GSEA plots for all significant results
+
+### Prep gene level statistics
+
+Prep the marker genes for GSEA the same way we did for instruction.
+
+```{r input_files}
+# Use the marker genes from cluster 1 that already have gene symbols associated
+# with them
+input_file <- file.path("analysis", 
+                        "hodgkins",
+                        "markers",
+                        "cluster01_markers_with_gene_symbols.tsv")
+
+# Read in the cluster 1 marker genes table
+markers_df <- readr::read_tsv(input_file)
+
+# Remove duplicates
+filtered_markers_df <- markers_df %>%
+  # Sort so that the highest absolute values of the summary log2 fold change are 
+  # at the top
+  dplyr::arrange(dplyr::desc(abs(summary.logFC))) %>%
+  # Filter out the duplicated rows using `dplyr::distinct()`
+  dplyr::distinct(gene_symbol, .keep_all = TRUE)
+
+# Ranked vector of genes
+lfc_vector <- filtered_markers_df %>%
+  # Extract a vector of `summary.logFC` named by `gene_symbol`
+  dplyr::pull(summary.logFC, name = gene_symbol)
+lfc_vector <- sort(lfc_vector, decreasing = TRUE)
+```
+
+### Prep gene sets
+
+We'll use the same gene sets we used during instruction; they are from the C7 immunologic collection at MSigDB.
+
+```{r}
+hs_immunologic_df <- msigdbr(species = "Homo sapiens",
+                             category = "C7")
+```
+
+### Run GSEA
+
+Run GSEA using the same parameters as we did during instruction.
+
+```{r}
+gsea_results <- GSEA(geneList = lfc_vector,  # ordered ranked gene list
+                     minGSSize = 25,  # minimum gene set size
+                     maxGSSize = 500,  # maximum gene set set
+                     pvalueCutoff = 0.05,
+                     pAdjustMethod = "BH",  # correction for multiple hypothesis testing
+                     TERM2GENE = dplyr::select(hs_immunologic_df,
+                                               gs_name,
+                                               gene_symbol))
+```
+Let's get the gene set names for all of the significant gene sets.
+
+```{r}
+significant_gene_sets <- gsea_results@result %>%  # tabular results
+  dplyr::filter(p.adjust < 0.05) %>%  # filter based on adjusted p-value
+  dplyr::pull(ID)  # pull the gene set names as a vector
+```
+
+### Save a GSEA plot for every significant 
+
+First, let's make sure we have a `plots/hodgkins/gsea` directory to hold our output.
+
+```{r}
+plots_dir <- file.path("plots", "hodgkins", "gsea")
+if (!dir.exists(plots_dir)) {
+  dir.create(plots_dir, recursive = TRUE)
+}
+```
+
+First, let's look at (one) way to save each of the significant pathways using `purrr`.
+
+```{r}
+# Create a list of plots, where each element of the list will be 
+plot_list <- purrr::map(
+  as.list(significant_gene_sets),   # Make a list of significant gene sets
+  ~ enrichplot::gseaplot(gsea_results,
+                         geneSetID = .x,  # Pathway name
+                         title = .x # Pathway name
+  )
+)
+
+# Now we need to "walk" through both the plots and the gene set names
+plot_list %>%
+  purrr::walk2(as.list(significant_gene_sets),  # contains pathway names
+               ~ ggplot2::ggsave(plot = .x,   # plot itself (first list)
+                                 filename = file.path(plots_dir, 
+                                                      paste0(.y, # pathway name (second list)
+                                                             "_gsea_plot.png")),
+                                 width = 11, height = 7
+               ))
+```
+
+Here's how to do the same thing by looping through the vector of the significant pathway names with a `for` loop!
+
+```{r}
+for (pathway in significant_gene_sets) {
+  # Create the plot and assign it to `p`
+  p <- enrichplot::gseaplot(gsea_results,
+                            geneSetID = pathway,  # Pathway name
+                            title = pathway) # Pathway name
+  # Save the plot, using the pathway name as part of the filename
+  # Note that this will write over the files we saved with the purrr method!
+  ggplot2::ggsave(plot = p, filename = file.path(plots_dir,
+                                                 paste0(pathway, "_gsea_plot.png")),
+                  width = 11, height = 7)
+}
+```
+
+## A little more on GSEA significance
+
+There was a question about how one gene set could be not be statistically significant if it had a higher absolute enrichment score than a significant gene set.
+
+Each pathway used as input to GSEA is tested for significance through permutation testing.
+
+If we look at [Figure 1A](https://www.biorxiv.org/content/biorxiv/early/2021/02/01/060012/F1.large.jpg) from [Korotkevich *et al.* (2021)](https://doi.org/10.1101/060012), the paper that describes the fgsea algorithm "under the hood" of `GSEA()`:
+
+![](https://www.biorxiv.org/content/biorxiv/early/2021/02/01/060012/F1.large.jpg)
+
+**We can see that the uncorrected p-value is calculated from a distribution of enrichment scores generated by randomly sampling _gene sets of the same size_.**
+
+Different gene set of different sizes will produce different distributions and part of the rationale for _normalized_ enrichment scores (NES) are to make enrichment scores from pathways/gene sets of different sizes more comparable.
+
+Let's look at this in a little more depth by generating random gene sets of different sizes and examining the enrichment scores that we get back out of `GSEA()`.
+
+```{r}
+# Create a vector of all gene symbols
+all_genes <- markers_df$gene_symbol
+
+# Make a list of integers that indicate the random gene set sizes
+gene_set_size <- list(15, 25, 50, 100, 250, 500)
+
+# Set number of replicates
+nreps <- 1000
+# Generate 1000 random gene sets of each size
+random_gene_sets <- rep(gene_set_size, nreps) %>%  # Repeat gene sizes so we run `nreps` times 
+  purrr::map(
+    # Sample the vector of all genes, choosing the number of items specified
+    # in the element of gene set size
+    ~ base::sample(x = all_genes,
+                   size = .x)
+  )
+
+# We will include the size of the gene set in the gene set name 
+# Start by taking the length of each pathway and appending "pathway_" to that
+# number
+lengths_vector <- random_gene_sets %>%
+  # Get the length of each gene set (number of genes)
+  purrr::map(~ length(.x)) %>%
+  # Make it "pathway_<gene set size>"
+  purrr::map(~ paste0("pathway_", .x)) %>%
+  # Return a vector
+  purrr::flatten_chr()
+
+# Add the names in lengths_vector to the list - "pathway_<gene set size>"
+random_gene_sets <- random_gene_sets %>% 
+  # make.names() appends a "version" if something is not unique
+  purrr::set_names(nm = make.names(lengths_vector, unique = TRUE))
+
+# Make this a data frame that GSEA() can use
+random_gene_set_df <- reshape2::melt(random_gene_sets) %>%
+  dplyr::select(gene_set = L1, symbol = value)
+```
+
+Now perform GSEA using these random gene sets of different sizes.
+
+```{r}
+gsea_random <- GSEA(geneList = lfc_vector,  # ordered ranked gene list
+                     minGSSize = 15,  # minimum gene set size
+                     maxGSSize = 500,  # maximum gene set set
+                     pvalueCutoff = 1,  # Return everything!
+                     pAdjustMethod = "BH",  # correction for multiple hypothesis testing
+                     TERM2GENE = random_gene_set_df)  # data frame with randomly generated gene sets
+```
+Let's get the enrichment scores and normalized enrichment scores in a data frame we'll use for plotting.
+
+```{r}
+random_es <- gsea_random@result %>%
+  # Just the pathway name, enrichment score, and normalized enrichment score
+  dplyr::select(ID, enrichmentScore, NES) %>%
+  # Create a new column that includes the gene set size as a factor in ascending
+  # order
+  dplyr::mutate(pathway_size = factor(
+    stringr::str_remove(stringr::str_remove(ID ,"\\..*"), ".*\\_" ),
+    levels = c(15, 25, 50, 100, 250, 500)
+  ))
+
+# Take a peek
+head(random_es)
+```
+
+Let's create a ridgeline plot of enrichment scores.
+
+```{r}
+random_es %>%
+  ggplot2::ggplot(ggplot2::aes(enrichmentScore,
+                               pathway_size,
+                               fill = pathway_size)) +
+  ggridges::geom_density_ridges() +
+  ggplot2::theme_bw()
+```
+
+The distributions look different depending on the gene set size! 
+If a gene set with 500 genes in it had an enrichment score of 0.75, we might expect that it would be called significant where a gene set with 15 genes in it with the same enrichment score might not be significant (based on the visuals in this plot alone!)
+
+If we look at the normalized enrichment scores, the scores themselves are more comparable but we can still see some differences in the distributions.
+
+```{r}
+random_es %>%
+  ggplot2::ggplot(ggplot2::aes(NES,
+                               pathway_size,
+                               fill = pathway_size)) +
+  ggridges::geom_density_ridges() +
+  ggplot2::theme_bw()
+```
+
+## Session Info
+
+```{r}
+sessionInfo()
+```
+
